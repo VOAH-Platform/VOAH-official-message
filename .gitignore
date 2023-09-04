@@ -1,0 +1,8 @@
+.DS_Store
+
+.env
+run.sh
+
+# backend
+backend/data
+backend/tmp
