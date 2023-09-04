@@ -15,6 +15,7 @@ import {
   List,
   ListOrdered,
   Smile,
+  Keyboard,
 } from 'lucide-react';
 
 import { Line } from './line';
@@ -24,6 +25,8 @@ import {
   TextForm,
   CommitBtn,
   TextOption,
+  TypingWrapper,
+  Typing,
 } from './style';
 
 export function TextArea({ ...props }: { [key: string]: unknown }) {
@@ -56,6 +59,12 @@ export function TextArea({ ...props }: { [key: string]: unknown }) {
         <Line />
         <Smile color="#9099a6" size={25} />
       </TextOption>
+      <TypingWrapper>
+        <Keyboard color="#5f666d" size={20} />
+        <Typing>
+          <strong>펜타곤</strong> 님이 입력하고 있어요...
+        </Typing>
+      </TypingWrapper>
     </TextAreaWrapper>
   );
 }

@@ -27,6 +27,7 @@ export const InputText = styled('textarea', {
   paddingLeft: '1rem',
   marginRight: '1.5rem',
   resize: 'none',
+  overflowY: 'hidden',
   border: '2px solid $gray200',
   background: '$gray0',
   borderRadius: '1rem',
@@ -46,6 +47,7 @@ export const CommitBtn = styled('button', {
   borderRadius: '1rem',
   background: '$secondary400',
   textAlign: 'center',
+  cursor: 'pointer',
 });
 
 export const TextOption = styled('div', {
@@ -58,4 +60,21 @@ export const TextOption = styled('div', {
   alignSelf: 'stretch',
   borderRadius: '12px',
   background: '$gray100',
+});
+
+export const TypingWrapper = styled('div', {
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+});
+
+export const Typing = styled('div', {
+  marginLeft: '0.25rem',
+  color: '$gray500',
+  fontFamily: 'SUIT',
+  fontSize: '1rem',
+  fontStyle: 'normal',
+  fontWeight: '600',
+  lineHeight: '140%',
+  letterSpacing: '-0.12px',
 });
