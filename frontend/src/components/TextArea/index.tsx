@@ -1,4 +1,7 @@
 import {
+  Asterisk,
+  Hexagon,
+  Minus,
   SendHorizontal,
   Upload,
   AlertCircle,
@@ -17,6 +20,7 @@ import {
   Smile,
   Keyboard,
 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Line } from './line';
 import {
@@ -27,42 +31,89 @@ import {
   TextOption,
   TypingWrapper,
   Typing,
+  SelectMessageState,
+  StateBox,
 } from './style';
 
-export function TextArea({ ...props }: { [key: string]: unknown }) {
+export function TextArea({
+  writingUser,
+  showSelectMessageState,
+  ...props
+}: {
+  writingUser: Array<string>;
+  showSelectMessageState: boolean;
+  [key: string]: unknown;
+}) {
+  const [value, setValue] = useState('');
+  const textareaRef = useRef(null);
+  const hiddenTextareaRef = useRef(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    // const hiddenTextarea = hiddenTextareaRef.current;
+
+    textarea.value = value;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }, [value]);
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
+  };
   return (
     <TextAreaWrapper {...props}>
+      {showSelectMessageState ? (
+        <SelectMessageState>
+          <StateBox>
+            <AlertCircle color="white" size={20} /> 긴급
+          </StateBox>
+          <StateBox>중요</StateBox>
+          <StateBox>일반 메시지</StateBox>
+        </SelectMessageState>
+      ) : null}
       <TextForm>
-        <InputText placeholder="공개SW개발자대회에 메시지 보내기" />
+        <InputText
+          ref={textareaRef}
+          value={value}
+          onChange={handleChange}
+          placeholder="공개SW개발자대회에 메시지 보내기"
+        />
         <CommitBtn>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
       </TextForm>
       <TextOption>
-        <Upload color="#9099a6" size={25} /> {/* 팔래트 적용이 안돼요ㅜㅜ */}
-        <AlertCircle color="#9099a6" size={25} />
+        <Upload color="#9099a6" size={25} style={{ cursor: 'pointer' }} />{' '}
+        {/* 팔래트 적용이 안돼요ㅜㅜ */}
+        <AlertCircle color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
         <Line />
-        <Bold color="#9099a6" size={25} />
-        <Italic color="#9099a6" size={25} />
-        <Strikethrough color="#9099a6" size={25} />
-        <Underline color="#9099a6" size={25} />
+        <Bold color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Italic color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Strikethrough
+          color="#9099a6"
+          size={25}
+          style={{ cursor: 'pointer' }}
+        />
+        <Underline color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
         <Line />
-        <Heading1 color="#9099a6" size={25} />
-        <Heading2 color="#9099a6" size={25} />
-        <Heading3 color="#9099a6" size={25} />
+        <Heading1 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Heading2 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Heading3 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
         <Line />
-        <Link color="#9099a6" size={25} />
-        <Code2 color="#9099a6" size={25} />
-        <Quote color="#9099a6" size={25} />
-        <List color="#9099a6" size={25} />
+        <Link color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Code2 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Quote color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <List color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
         <ListOrdered color="#9099a6" size={25} />
         <Line />
-        <Smile color="#9099a6" size={25} />
+        <Smile color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
       </TextOption>
       <TypingWrapper>
-        <Keyboard color="#5f666d" size={20} />
+        <Keyboard color="#5f666d" size={20} style={{ cursor: 'pointer' }} />
         <Typing>
-          <strong>펜타곤</strong> 님이 입력하고 있어요...
+          {writingUser.length === 0
+            ? null
+            : writingUser.map((e) => ' ' + e) + ' 님이 입력하고 있어요...'}
         </Typing>
       </TypingWrapper>
     </TextAreaWrapper>

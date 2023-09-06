@@ -1,11 +1,10 @@
-import { Asterisk } from 'lucide-react';
+// import { Mention } from '../TextArea/style';
 
 import { ProfileImg } from './profileImg';
-import { UserStateData, MessageStateData } from './states';
+import { MessageState } from './State/messageState';
 import {
   MessageHeader,
   MessageWrapper,
-  State,
   Writer,
   Date,
   Content,
@@ -13,39 +12,46 @@ import {
   UserState,
   UserStateBox,
 } from './style';
+import { getMessageStateClassName } from './utils';
+import './style.scss';
 
 export function Message({
-  children,
-  profileImage,
-  profileState,
-  messageState,
-  writer,
-  date,
+  userId,
+  priority,
+  messageContent,
+  messageDate,
+  messageIsEdited,
+  attachmentType,
+  attachmentUrl,
   ...props
 }: {
-  children: React.ReactNode;
-  profileImage: undefined /* img 타입이 뭐지 */;
-  profileState: UserStateData;
-  messageState: MessageStateData;
-  writer: string;
-  date: string /* 날짜를 나타내는 좋은 방법이 있을까 */;
+  userId: string;
+  priority: number;
+  messageContent: string;
+  messageDate: string;
+  messageIsEdited: boolean;
+  attachmentType: string;
+  attachmentUrl: string;
   [key: string]: unknown;
 }) {
   return (
-    <MessageWrapper>
+    <MessageWrapper
+      className={`message-wrapper ${getMessageStateClassName(priority)}`}>
       <UserStateBox>
         <ProfileImg />
         <UserState />
       </UserStateBox>
       <Content>
         <MessageHeader>
-          <State>
-            <Asterisk color="white" size={12} /> 긴급
-          </State>
-          <Writer>{writer}</Writer>
-          <Date>{date /** 날짜를 가공해서 데이터를 보여주기 */}</Date>
+          <MessageState showComponent={getMessageStateClassName(priority)} />
+          <Writer>{userId}</Writer>
+          <Date>{messageDate}</Date>
+          <>{messageIsEdited}</>
         </MessageHeader>
-        <Text>{children}</Text>
+        <Text>
+          {/* {mention === null ? '' : <Mention>{'@' + mention}</Mention>} */}
+          {messageContent}
+        </Text>
       </Content>
     </MessageWrapper>
   );
