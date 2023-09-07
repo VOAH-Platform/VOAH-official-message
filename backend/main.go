@@ -4,17 +4,18 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
-	"implude.kr/VOAH-Template-Project/configs"
-	"implude.kr/VOAH-Template-Project/routers"
-	"implude.kr/VOAH-Template-Project/utils/directory"
-	"implude.kr/VOAH-Template-Project/utils/logger"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"implude.kr/VOAH-Official-Message/configs"
+	"implude.kr/VOAH-Official-Message/database"
+	"implude.kr/VOAH-Official-Message/routers"
+	"implude.kr/VOAH-Official-Message/utils/logger"
 )
 
 func main() {
 	configs.LoadEnv()     // Load envs
 	configs.LoadSetting() // Load settings
 	logger.InitLogger()   // Intitialize logger
-	directory.IniteDirectory()
+	database.ConnectDB()  // Connect to database
 
 	serverConf := configs.Env.Server
 	log := logger.Logger
@@ -22,12 +23,11 @@ func main() {
 	app := fiber.New()
 
 	// CORS
-	app.Use(func(c *fiber.Ctx) error {
-		c.Set("Access-Control-Allow-Origin", serverConf.CSRFOrigin)
-		c.Set("Access-Control-Allow-Methods", "*")
-		c.Set("Access-Control-Allow-Headers", "*")
-		return c.Next()
-	})
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: serverConf.CSRFOrigin,
+		AllowHeaders: "*",
+		AllowMethods: "*",
+	}))
 
 	routers.Initialize(app)
 

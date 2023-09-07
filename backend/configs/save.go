@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"implude.kr/VOAH-Template-Project/utils/logger"
+	"implude.kr/VOAH-Official-Message/utils/logger"
 )
 
 func SaveSetting(jsonSetting string) (err error) {
