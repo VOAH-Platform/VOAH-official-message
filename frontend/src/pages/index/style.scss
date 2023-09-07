@@ -1,0 +1,8 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    width: 0.02rem;
+  }
+}
