@@ -31,6 +31,7 @@ func sendJson(c *fiber.Ctx) error {
 	db := database.DB
 	chat := models.Chat{
 		Content:   body.Content,
+		AuthorID:  c.Locals("user-id").(uuid.UUID),
 		ChannelID: body.ChannelId,
 	}
 
