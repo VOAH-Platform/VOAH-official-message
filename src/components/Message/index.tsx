@@ -11,6 +11,7 @@ import {
   OtherHeaderText,
   Content,
   AnswerContent,
+  AnswerText,
   Text,
   UserState,
   UserStateBox,
@@ -28,10 +29,9 @@ export function Message({
   isMessageEdited,
   // isMessageAnswering,
   AnsweringMessage,
-  AnsweringUserId, // attachmentType,
-  // ...props
-} // attachmentUrl,
-: {
+  AnsweringUserId, // ...props
+  // attachmentType, attachmentUrl,
+}: {
   userId: string;
   priority: number;
   messageContent: string;
@@ -55,10 +55,10 @@ export function Message({
             color: '$primary400',
           }}
         />
-        <p style={{ margin: '0', color: '#af57d9', fontWeight: 'bold' }}>
+        <AnswerText style={{ color: '#af57d9', fontWeight: 'bold' }}>
           @{AnsweringUserId}
-        </p>
-        <p style={{ margin: '0' }}>{AnsweringMessage}</p>
+        </AnswerText>
+        <AnswerText>{AnsweringMessage}</AnswerText>
       </AnswerContent>
       <MessageWrapper
         className={`message-wrapper ${getMessageStateClassName(priority)}`}>

@@ -7,10 +7,14 @@ export const AnswerContent = styled('div', {
   border: 'none',
   display: 'flex',
   alignItems: 'center',
+  marginBottom: '0.5rem',
+  marginLeft: '1rem',
 });
 
 export const AnswerText = styled('p', {
   margin: '0',
+  fontSize: '1rem',
+  marginLeft: '0.25rem',
 });
 
 export const MessageWrapper = styled('div', {
