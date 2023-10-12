@@ -86,34 +86,40 @@ export function TextArea({
         </CommitBtn>
       </TextForm>
       <TextOption>
-        <Upload size={25} style={{ cursor: 'pointer', color: '$gray700' }} />{' '}
-        <AlertCircle
-          size={25}
-          style={{ cursor: 'pointer', color: '$gray400' }}
-        />
+        <Upload size={25} color="#9099a6" style={{ cursor: 'pointer' }} />{' '}
+        <AlertCircle size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Line />
-        <Bold size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
-        <Italic size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
+        <Bold size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Italic size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Strikethrough
           size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+        />
+        <Underline size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Line />
+        <Heading1 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Heading2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Heading3 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Line />
+        <Link size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Code2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Quote
+          size={25}
+          color="#9099a6"
           style={{ cursor: 'pointer', color: '$gray400' }}
         />
-        <Underline size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
+        <List size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <ListOrdered size={25} color="#9099a6" />
         <Line />
-        <Heading1 size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
-        <Heading2 size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
-        <Heading3 size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
-        <Line />
-        <Link size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
-        <Code2 size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
-        <Quote size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
-        <List size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
-        <ListOrdered size={25} />
-        <Line />
-        <Smile size={25} style={{ cursor: 'pointer', color: '$gray400' }} />
+        <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
       </TextOption>
       <TypingWrapper>
-        <Keyboard size={20} style={{ cursor: 'pointer', color: '$gray400' }} />
+        <Keyboard
+          size={20}
+          color="#5f666d"
+          style={{ cursor: 'pointer', color: '$gray400' }}
+        />
         <Typing>
           {writingUser.length === 0
             ? null
