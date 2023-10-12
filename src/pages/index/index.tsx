@@ -1,5 +1,6 @@
 // import { format } from 'date-fns';
 import { useAtom } from 'jotai';
+import React, { useState, useEffect } from 'react';
 
 import { themeAtom } from '@/atom';
 import { ExampleButton } from '@/components/ExampleButton';
@@ -124,8 +125,30 @@ export function IndexPage() {
     return res;
   };
 
-  const message_list = messages
-    .map((content, index) => (
+  const before_list = messages.map((content, index) => (
+    <Message
+      key={index}
+      userId={content.userId}
+      priority={content.priority}
+      messageContent={content.message.content}
+      messageDate={calcDate(content.message.date)}
+      isMessageEdited={true}
+      isMessageAnswering={true}
+      AnsweringUserId={'홍길동'}
+      AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
+      attachmentType={content.attachment[0].type}
+      attachmentUrl={content.attachment[0].url}
+    />
+  ));
+
+  let message_list = before_list.reverse();
+
+  function fetchMessageRequest() {
+    const a = [];
+    for (let i = 0; i <= 10; i++) {
+      a.push(fetchMessageData());
+    }
+    const wow = a.map((content, index) => (
       <Message
         key={index}
         userId={content.userId}
@@ -139,8 +162,29 @@ export function IndexPage() {
         attachmentType={content.attachment[0].type}
         attachmentUrl={content.attachment[0].url}
       />
-    ))
-    .reverse();
+    ));
+    message_list = message_list.concat(wow.reverse());
+  }
+
+  const [isAtTop, setIsAtTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY === 0) {
+        console.log('wow');
+        setIsAtTop(true);
+      } else {
+        console.log('wow');
+        setIsAtTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll());
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll());
+    };
+  }, [window.scrollY]);
 
   return (
     <IndexWrapper className="container">
@@ -162,7 +206,10 @@ export function IndexPage() {
         }>
         SYSTEM
       </ExampleButton>
-      <div>{message_list}</div>
+      <div>
+        {isAtTop ? fetchMessageRequest() : <p>wow</p>}
+        {message_list}
+      </div>
       <TextArea
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
         showSelectMessageState={false}
