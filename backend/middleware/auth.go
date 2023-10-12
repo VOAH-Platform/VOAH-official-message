@@ -64,6 +64,6 @@ func Authenticate(c *fiber.Ctx) error {
 			"message": "Unauthorized",
 		})
 	}
-	c.Locals("user-id") // pass user id to next middleware
+	c.Locals("user-id", respObject.UserID)  // pass user id to next middleware
 	return c.Next()
 }
