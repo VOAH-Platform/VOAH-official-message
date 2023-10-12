@@ -27,11 +27,11 @@ export function Message({
   messageContent,
   messageDate,
   isMessageEdited,
-  // isMessageAnswering,
+  isMessageAnswering,
   AnsweringMessage,
-  AnsweringUserId, // ...props
-  // attachmentType, attachmentUrl,
+  AnsweringUserId, // attachmentType,attachmentUrl,
 }: {
+  // ...props
   userId: string;
   priority: number;
   messageContent: string;
@@ -46,20 +46,24 @@ export function Message({
 }) {
   return (
     <div style={{ marginTop: '0.75rem' }}>
-      <AnswerContent>
-        <Reply
-          size={20}
-          color="#af57d9"
-          style={{
-            transform: 'scaleX(-1)',
-            color: '$primary400',
-          }}
-        />
-        <AnswerText style={{ color: '#af57d9', fontWeight: 'bold' }}>
-          @{AnsweringUserId}
-        </AnswerText>
-        <AnswerText>{AnsweringMessage}</AnswerText>
-      </AnswerContent>
+      {isMessageAnswering ? (
+        <AnswerContent>
+          <Reply
+            size={20}
+            color="#af57d9"
+            style={{
+              transform: 'scaleX(-1)',
+              color: '$primary400',
+            }}
+          />
+          <AnswerText style={{ color: '#af57d9', fontWeight: 'bold' }}>
+            @{AnsweringUserId}
+          </AnswerText>
+          <AnswerText>{AnsweringMessage}</AnswerText>
+        </AnswerContent>
+      ) : (
+        <></>
+      )}
       <MessageWrapper
         className={`message-wrapper ${getMessageStateClassName(priority)}`}>
         <UserStateBox>
@@ -70,7 +74,7 @@ export function Message({
           <MessageHeader>
             <MessageState showComponent={getMessageStateClassName(priority)} />
             <Writer>{userId}</Writer>
-            <OtherHeaderText>{messageDate}</OtherHeaderText> {/** date */}
+            <OtherHeaderText>{messageDate}</OtherHeaderText> {/* date */}
             {isMessageEdited ? (
               <OtherHeaderText>편집됨</OtherHeaderText>
             ) : (
