@@ -133,7 +133,7 @@ export function IndexPage() {
         messageContent={content.message.content}
         messageDate={calcDate(content.message.date)}
         isMessageEdited={true}
-        isMessageAnswering={false}
+        isMessageAnswering={true}
         AnsweringUserId={'홍길동'}
         AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
         attachmentType={content.attachment[0].type}
