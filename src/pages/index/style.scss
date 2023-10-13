@@ -2,22 +2,13 @@
   width: 100vw;
   height: 100vh;
   overflow: auto;
+
   /*
-  &::-webkit-scrollbar {
-    width: 0.02rem;
+  &::-webkit-scrollbar-thumb {
+    
+    border-radius: 50%;
   }
   */
+
 }
 
-.message-wrapper::-webkit-scrollbar {
-  width: 10px;
-}
-
-.message-wrapper::-webkit-scrollbar-thumb {
-  height: 30%;
-  background: #e2e7ec;
-}
-
-.message-wrapper::-webkit-scrollbar-track {
-  background: #5f666d;
-}

@@ -26,7 +26,7 @@ export const MessageWrapper = styled('div', {
   // backgroundColor: '$accept500',
   // backgroundColor: 'rgba(39, 178, 120, 0.1)',
   // opacity: '0.1',
-  width: '100vw',
+  width: '98vw',
 });
 
 /** 프로필 이미지와 유저 상태를 감쌈 */
