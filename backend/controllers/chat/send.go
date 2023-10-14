@@ -13,7 +13,7 @@ type Message struct {
 	ChannelId uuid.UUID `gorm:"type:uuid;not null;"`
 }
 
-func sendJson(c *fiber.Ctx) error {
+func SendJson(c *fiber.Ctx) error {
 	body := new(Message)
 	if err := c.BodyParser(body); err != nil {
 		return c.Status(400).JSON(fiber.Map{
