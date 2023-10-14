@@ -1,27 +1,40 @@
 package websockets
 
 import (
+	"time"
+
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+	"implude.kr/VOAH-Official-Message/database"
+	"implude.kr/VOAH-Official-Message/models"
+	"implude.kr/VOAH-Official-Message/utils/logger"
 )
 
-func websocketHandler(c *fiber.Ctx) error {
+var TimeList = make(map[uuid.UUID]time.Time)
+
+func WebsocketHandler(c *fiber.Ctx) error {
 	return websocket.New(func(conn *websocket.Conn) {
-		var (
-			msg string
-			err error
-		)
+		db := database.DB
+		log := logger.Logger
+		channelId := uuid.MustParse(c.Params("id"))
+		
+		var chat models.Chat
+
 		for {
-			if err = conn.ReadJSON(&msg); err != nil {
-				return
+			db.Where(&models.Chat{ChannelID: channelId}).Last(&chat)
+			val, ok := TimeList[channelId]
+
+			if !ok {
+				TimeList[channelId] = chat.CreatedAt
 			}
 
-			if err = conn.WriteJSON(msg); err != nil {
-				return
+			if val.Before(chat.CreatedAt) {
+				if err := conn.WriteMessage(0, []byte("read")); err != nil {
+					log.Error("write error")
+				}
+				TimeList[channelId] = chat.CreatedAt
 			}
 		}
 	})(c)
 }
-
-// to do
-// https://github.com/unownone/go-chat
