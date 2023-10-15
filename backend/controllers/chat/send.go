@@ -9,8 +9,8 @@ import (
 )
 
 type Message struct {
-	Content   string    `gorm:"type:text;not null;"`
-	ChannelId uuid.UUID `gorm:"type:uuid;not null;"`
+	Content   string    `json:"content" validate:"required"`
+	ChannelId uuid.UUID `json:"channel_id" validate:"required,uuid4"`
 }
 
 func SendJson(c *fiber.Ctx) error {
@@ -36,7 +36,11 @@ func SendJson(c *fiber.Ctx) error {
 	}
 
 	if err := db.Create(&chat).Error; err != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create chat", "data": err})
+		return c.Status(500).JSON(fiber.Map{
+			"status": "error", 
+			"message": "Could not create chat", 
+			"data": err,
+		})
 	}
 
 	return c.Status(201).JSON(fiber.Map{"status": "success"})
