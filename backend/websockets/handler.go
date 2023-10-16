@@ -11,30 +11,48 @@ import (
 	"implude.kr/VOAH-Official-Message/utils/logger"
 )
 
-var TimeList = make(map[uuid.UUID]time.Time)
-
 func WebsocketHandler(c *fiber.Ctx) error {
 	return websocket.New(func(conn *websocket.Conn) {
 		db := database.DB
 		log := logger.Logger
-		channelId := uuid.MustParse(c.Params("id"))
+
+		channelId, err := uuid.Parse(c.Params("id"));
+		if err != nil {
+			log.Error("channer id is not uuid")
+		}
 		
-		var chat models.Chat
+		var (
+            msg string
+			chat models.Chat
+			updated time.Time
+        )
 
 		for {
-			db.Where(&models.Chat{ChannelID: channelId}).Last(&chat)
-			val, ok := TimeList[channelId]
+			if err := conn.ReadJSON(&msg); err != nil {
+                log.Error("read error")
+                break
+            }
 
-			if !ok {
-				TimeList[channelId] = chat.CreatedAt
+			if err := updated.UnmarshalJSON([]byte(msg)); err != nil {
+				log.Error("msg not equall RFC 3339 format")
 			}
 
-			if val.Before(chat.CreatedAt) {
-				if err := conn.WriteMessage(0, []byte("read")); err != nil {
-					log.Error("write error")
+			count := 0
+
+			for {
+				db.Where(&models.Chat{ChannelID: channelId}).Offset(count).First(&chat)
+				if updated.Before(chat.UpdatedAt) {
+					count += 1
+				} else {
+					break
 				}
-				TimeList[channelId] = chat.CreatedAt
 			}
+		
+			if err := conn.WriteJSON(count); err != nil {
+				log.Error("write error")
+			break
 		}
+		}
+
 	})(c)
 }
