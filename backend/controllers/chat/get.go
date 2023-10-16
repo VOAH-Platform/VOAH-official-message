@@ -12,6 +12,7 @@ import (
 type GetChatListRequest struct {
 	ChannelID string `json:"channel_id" validate:"required,uuid4"`
 	Count     int    `json:"count" validate:"required"`
+	Page int `json:"page" validate:"required"`
 }
 
 func GetChatList(c *fiber.Ctx) error {
@@ -32,7 +33,12 @@ func GetChatList(c *fiber.Ctx) error {
 
 	var chats []models.Chat
 
-	if err := db.Limit(getChatListRequest.Count).Where(&models.Chat{ChannelID: uuid.MustParse(getChatListRequest.ChannelID)}).Find(&chats).Error; err != nil && err != gorm.ErrRecordNotFound {
+	err := db.Where(&models.Chat{ChannelID: uuid.MustParse(getChatListRequest.ChannelID)}).
+			Order("CreatedAt").Offset(getChatListRequest.Page * getChatListRequest.Count).
+			Limit(getChatListRequest.Count).
+			Find(&chats).Error
+
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return c.Status(500).JSON(fiber.Map{
 			"message": "Internal server error",
 		})
