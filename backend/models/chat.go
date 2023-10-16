@@ -12,4 +12,5 @@ type Chat struct {
 	AuthorID  uuid.UUID `gorm:"type:uuid;not null;"`
 	ChannelID uuid.UUID `gorm:"type:uuid;not null;"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created-at"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated-at"`
 }
