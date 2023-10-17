@@ -1,16 +1,32 @@
 import { styled } from '@/stitches.config';
 
+// import { AnswerContent } from './style';
+
+export const AnswerContent = styled('div', {
+  color: '$gray900',
+  border: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '0.5rem',
+  marginLeft: '1rem',
+});
+
+export const AnswerText = styled('p', {
+  margin: '0',
+  fontSize: '1rem',
+  marginLeft: '0.25rem',
+});
+
 export const MessageWrapper = styled('div', {
   padding: '1rem 1.25rem',
   borderRadius: '1rem',
   border: 'none',
   display: 'flex',
   alignItems: 'center',
-  marginTop: '0.75rem',
   // backgroundColor: '$accept500',
   // backgroundColor: 'rgba(39, 178, 120, 0.1)',
   // opacity: '0.1',
-  width: '100vw',
+  width: '98vw',
 });
 
 /** 프로필 이미지와 유저 상태를 감쌈 */
@@ -97,7 +113,7 @@ export const Writer = styled('div', {
   cursor: 'pointer',
 });
 
-export const Date = styled('div', {
+export const OtherHeaderText = styled('div', {
   color: '$gray400',
   fontFamily: '$SUIT',
   fontSize: '0.75rem',

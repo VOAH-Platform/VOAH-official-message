@@ -1,7 +1,7 @@
 import {
-  Asterisk,
-  Hexagon,
-  Minus,
+  // Asterisk,
+  // Hexagon,
+  // Minus,
   SendHorizontal,
   Upload,
   AlertCircle,
@@ -20,7 +20,7 @@ import {
   Smile,
   Keyboard,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import { Line } from './line';
 import {
@@ -45,21 +45,24 @@ export function TextArea({
   [key: string]: unknown;
 }) {
   const [value, setValue] = useState('');
-  const textareaRef = useRef(null);
-  const hiddenTextareaRef = useRef(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  // const hiddenTextareaRef = useRef(null);
 
   useEffect(() => {
     const textarea = textareaRef.current;
     // const hiddenTextarea = hiddenTextareaRef.current;
 
-    textarea.value = value;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
+    if (textarea != null) {
+      textarea.value = value;
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
   }, [value]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
   };
+
   return (
     <TextAreaWrapper {...props}>
       {showSelectMessageState ? (
@@ -83,37 +86,44 @@ export function TextArea({
         </CommitBtn>
       </TextForm>
       <TextOption>
-        <Upload color="#9099a6" size={25} style={{ cursor: 'pointer' }} />{' '}
-        {/* 팔래트 적용이 안돼요ㅜㅜ */}
-        <AlertCircle color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Upload size={25} color="#9099a6" style={{ cursor: 'pointer' }} />{' '}
+        <AlertCircle size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Line />
-        <Bold color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Italic color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Bold size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Italic size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Strikethrough
-          color="#9099a6"
           size={25}
+          color="#9099a6"
           style={{ cursor: 'pointer' }}
         />
-        <Underline color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Underline size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Line />
-        <Heading1 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Heading2 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Heading3 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Heading1 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Heading2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Heading3 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Line />
-        <Link color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Code2 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Quote color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <List color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <ListOrdered color="#9099a6" size={25} />
+        <Link size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Code2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Quote
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer', color: '$gray400' }}
+        />
+        <List size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <ListOrdered size={25} color="#9099a6" />
         <Line />
-        <Smile color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
       </TextOption>
       <TypingWrapper>
-        <Keyboard color="#5f666d" size={20} style={{ cursor: 'pointer' }} />
+        <Keyboard
+          size={20}
+          color="#5f666d"
+          style={{ cursor: 'pointer', color: '$gray400' }}
+        />
         <Typing>
           {writingUser.length === 0
             ? null
-            : writingUser.map((e) => ' ' + e) + ' 님이 입력하고 있어요...'}
+            : `${writingUser.join(' ')} 님이 입력하고 있어요...`}
         </Typing>
       </TypingWrapper>
     </TextAreaWrapper>
