@@ -13,7 +13,7 @@ func addChat(router *fiber.App) {
 	chatGroup.Use(middleware.Authenticate)
 
 	chatGroup.Get("/", func(c *fiber.Ctx) error {
-		return chat.GetChatList(c)(c)
+		return chat.GetChatList(c)
 	})
 
 	chatGroup.Get("/:id", websockets.WebsocketHandler)

@@ -15,7 +15,7 @@ import (
 type CheckTokenResponse struct {
 	Success bool                    `json:"success" validate:"required"`
 	UserID  string                  `json:"user-id" validate:"required,uuid4"`
-	Perms   []permission.Permission `json:"perms" validate:"required"`
+	Perms   []permission.Permission `json:"permission" validate:"required"`
 }
 
 func Authenticate(c *fiber.Ctx) error {
@@ -48,6 +48,7 @@ func Authenticate(c *fiber.Ctx) error {
 	}
 
 	respObject := &CheckTokenResponse{}
+	fmt.Println(string(resp.Body()))
 	if err := json.Unmarshal(resp.Body(), respObject); err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"message": "Internal Server Error",
