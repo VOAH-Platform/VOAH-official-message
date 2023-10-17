@@ -47,25 +47,6 @@ export function TextArea({
   showSelectMessageState: boolean;
   [key: string]: unknown;
 }) {
-  const [value, setValue] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  // const hiddenTextareaRef = useRef(null);
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    // const hiddenTextarea = hiddenTextareaRef.current;
-
-    if (textarea != null) {
-      textarea.value = value;
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [value]);
-
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(e.target.value);
-  };
-
   return (
     <TextAreaWrapper {...props}>
       {showSelectMessageState ? (

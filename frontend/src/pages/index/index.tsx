@@ -1,6 +1,6 @@
 // import { format } from 'date-fns';
 import { useAtom } from 'jotai';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import { themeAtom } from '@/atom';
 import { ExampleButton } from '@/components/ExampleButton';
@@ -186,31 +186,47 @@ export function IndexPage() {
     };
   }, [window.scrollY]);
 
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Get the height of the first component
+    const height = textAreaRef.current?.clientHeight;
+
+    // Use the height to set the margin of the second component
+    if (divRef.current) {
+      divRef.current.style.marginTop = `${height}px`;
+    }
+  }, []);
+
   return (
     <IndexWrapper className="container">
-      VOAH TEMPLATE
-      <ExampleButton
-        onClick={() => setTheme({ token: THEME_TOKEN.LIGHT, isDark: false })}>
-        LIGHT
-      </ExampleButton>
-      <ExampleButton
-        onClick={() => setTheme({ token: THEME_TOKEN.DARK, isDark: true })}>
-        DARK
-      </ExampleButton>
-      <ExampleButton
-        onClick={() =>
-          setTheme({
-            token: THEME_TOKEN.SYSTEM,
-            isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
-          })
-        }>
-        SYSTEM
-      </ExampleButton>
-      <div>
-        {isAtTop ? (fetchMessageRequest(), null) : <p>wow</p>}
-        {message_list}
+      <div ref={divRef}>
+        VOAH TEMPLATE
+        <ExampleButton
+          onClick={() => setTheme({ token: THEME_TOKEN.LIGHT, isDark: false })}>
+          LIGHT
+        </ExampleButton>
+        <ExampleButton
+          onClick={() => setTheme({ token: THEME_TOKEN.DARK, isDark: true })}>
+          DARK
+        </ExampleButton>
+        <ExampleButton
+          onClick={() =>
+            setTheme({
+              token: THEME_TOKEN.SYSTEM,
+              isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
+            })
+          }>
+          SYSTEM
+        </ExampleButton>
+        <div>
+          {isAtTop ? (fetchMessageRequest(), null) : <p>wow</p>}
+          {message_list}
+        </div>
       </div>
       <TextArea
+        ref={textAreaRef}
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
         showSelectMessageState={false}
       />
