@@ -8,12 +8,14 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
 	"implude.kr/VOAH-Official-Message/configs"
+	"implude.kr/VOAH-Official-Message/utils/permission"
 	"implude.kr/VOAH-Official-Message/utils/validator"
 )
 
 type CheckTokenResponse struct {
-	Success bool   `json:"success" validate:"required"`
-	UserID  string `json:"user-id" validate:"required,uuid4"`
+	Success bool                    `json:"success" validate:"required"`
+	UserID  string                  `json:"user-id" validate:"required,uuid4"`
+	Perms   []permission.Permission `json:"perms" validate:"required"`
 }
 
 func Authenticate(c *fiber.Ctx) error {
@@ -64,6 +66,6 @@ func Authenticate(c *fiber.Ctx) error {
 			"message": "Unauthorized",
 		})
 	}
-	c.Locals("user-id", respObject.UserID)  // pass user id to next middleware
+	c.Locals("user-id", respObject.UserID) // pass user id to next middleware
 	return c.Next()
 }
