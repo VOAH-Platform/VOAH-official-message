@@ -44,7 +44,7 @@ export const TextForm = styled('div', {
   margin: '0.5rem 0',
   padding: '0.5rem',
   justifyContent: 'space-between',
-  alignItems: 'flex-end',
+  alignItems: 'center',
   border: '2px solid $gray200',
   borderRadius: '1rem',
 });
@@ -55,7 +55,7 @@ export const InputWrapper = styled('div', {
   display: 'flex',
   overflowY: 'scroll',
   justifyContent: 'flex-start',
-  alignItems: 'flex-end',
+  alignItems: 'center',
   background: '$gray0',
   color: '$gray400',
 

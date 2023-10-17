@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
+import { GhostInput } from '../GhostInput';
+
 import { Line } from './line';
 import {
   TextAreaWrapper,
@@ -75,14 +77,16 @@ export function TextArea({
           <StateBox>일반 메시지</StateBox>
         </SelectMessageState>
       ) : null}
+      {/* <GhostInput /> */}
       <TextForm>
         <InputWrapper>
-          <InputText
+          <GhostInput />
+          {/* <InputText
             ref={textareaRef}
             value={value}
             onChange={handleChange}
-            placeholder="공개SW개발자대회에 메시지 보내기"
-          />
+            placeholder="#공개SW개발자대회에 메시지 보내기"
+          /> */}
         </InputWrapper>
         <CommitBtn>
           <SendHorizontal color="white" size={25} />
