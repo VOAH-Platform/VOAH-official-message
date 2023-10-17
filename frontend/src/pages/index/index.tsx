@@ -1,7 +1,7 @@
 // import { format } from 'date-fns';
 import { useAtom } from 'jotai';
 import { useState, useEffect } from 'react';
-
+import { useInView } from 'react-intersection-observer';
 import { themeAtom } from '@/atom';
 import { ExampleButton } from '@/components/ExampleButton';
 // eslint-disable-next-line import/namespace
@@ -93,17 +93,15 @@ function fetchMessageData(): MessageData {
 export function IndexPage() {
   const [, setTheme] = useAtom(themeAtom);
   const messages = [];
-
-  // if (new Date(Date.now() - Profile.lastRefresh).getMinutes > 30) {
-  //   if (new Date(Date.now() - Profile.lastActivity).getMinutes > 30) {
-  //   } else {
-  //   }
-  // } else {
-  // }
-
-  for (let i = 0; i <= 10; i++) {
+  let observe_target: Element;
+  for (let i = 0; i <= 1; i++) {
     messages.push(fetchMessageData());
   }
+
+  useEffect(() => {
+    observe_target = document.querySelector('.this') as Element;
+    intersectionObserver.observe(observe_target);
+  });
 
   const calcDate = (tar: number) => {
     const today = new Date(Date.now());
@@ -128,6 +126,8 @@ export function IndexPage() {
   const before_list = messages.map((content, index) => (
     <Message
       key={index}
+      order={index}
+      length={messages.length - 1}
       userId={content.userId}
       priority={content.priority}
       messageContent={content.message.content}
@@ -141,50 +141,42 @@ export function IndexPage() {
     />
   ));
 
-  let message_list = before_list.reverse();
-
-  function fetchMessageRequest() {
-    const a = [];
-    for (let i = 0; i <= 10; i++) {
-      a.push(fetchMessageData());
-    }
-    const wow = a.map((content, index) => (
-      <Message
-        key={index}
-        userId={content.userId}
-        priority={content.priority}
-        messageContent={content.message.content}
-        messageDate={calcDate(content.message.date)}
-        isMessageEdited={true}
-        isMessageAnswering={true}
-        AnsweringUserId={'홍길동'}
-        AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
-        attachmentType={content.attachment[0].type}
-        attachmentUrl={content.attachment[0].url}
-      />
-    ));
-    message_list = message_list.concat(wow.reverse());
-  }
-
-  const [isAtTop, setIsAtTop] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY === 0) {
-        console.log('wow');
-        setIsAtTop(true);
-      } else {
-        console.log('wow');
-        setIsAtTop(false);
+  const intersectionObserver = new IntersectionObserver((entries) => {
+    console.log(entries[0].intersectionRatio);
+    if (entries[0].intersectionRatio > 0) {
+      intersectionObserver.disconnect();
+      console.log(entries[0].intersectionRatio);
+      const sample = [];
+      for (let i = 0; i < 2; i++) {
+        sample.push(fetchMessageData());
       }
-    };
+      const n = sample.map((content, index) => (
+        <Message
+          key={index}
+          order={index}
+          length={messages.length - 1}
+          userId={content.userId}
+          priority={content.priority}
+          messageContent={content.message.content}
+          messageDate={calcDate(content.message.date)}
+          isMessageEdited={true}
+          isMessageAnswering={true}
+          AnsweringUserId={'홍길동'}
+          AnsweringMessage={'추가된거'}
+          attachmentType={content.attachment[0].type}
+          attachmentUrl={content.attachment[0].url}
+        />
+      )) as JSX.Element[];
+      setMessage_list([n, ...message_list]);
+    }
+    observe_target = document.querySelector('.this') as Element;
+    return;
+  });
 
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [window.scrollY]);
+  // let message_list = before_list.reverse();
+  const [message_list, setMessage_list] = useState(before_list.reverse());
+  console.log(message_list);
+  // console.log(observe_target + '이거에유');
 
   return (
     <IndexWrapper className="container">
@@ -206,10 +198,7 @@ export function IndexPage() {
         }>
         SYSTEM
       </ExampleButton>
-      <div>
-        {isAtTop ? (fetchMessageRequest(), null) : <p>wow</p>}
-        {message_list}
-      </div>
+      <div>{message_list}</div>
       <TextArea
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
         showSelectMessageState={false}
