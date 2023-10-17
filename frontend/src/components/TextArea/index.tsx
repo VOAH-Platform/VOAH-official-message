@@ -33,6 +33,7 @@ import {
   Typing,
   SelectMessageState,
   StateBox,
+  InputWrapper,
 } from './style';
 
 export function TextArea({
@@ -75,12 +76,14 @@ export function TextArea({
         </SelectMessageState>
       ) : null}
       <TextForm>
-        <InputText
-          ref={textareaRef}
-          value={value}
-          onChange={handleChange}
-          placeholder="공개SW개발자대회에 메시지 보내기"
-        />
+        <InputWrapper>
+          <InputText
+            ref={textareaRef}
+            value={value}
+            onChange={handleChange}
+            placeholder="공개SW개발자대회에 메시지 보내기"
+          />
+        </InputWrapper>
         <CommitBtn>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
