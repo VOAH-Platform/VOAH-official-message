@@ -1,6 +1,9 @@
 package validator
 
-import "github.com/go-playground/validator"
+import (
+	"github.com/go-playground/validator"
+	"github.com/gofiber/fiber/v2"
+)
 
 type (
 	ValidationErrorResponse struct {
@@ -35,4 +38,20 @@ func (v XValidator) Validate(data interface{}) []ValidationErrorResponse {
 	}
 
 	return validationErrors
+}
+
+func ParseAndValidate(c *fiber.Ctx, target interface{}) []ValidationErrorResponse {
+	if err := c.BodyParser(target); err != nil {
+		return []ValidationErrorResponse{
+			{
+				Error:       true,
+				FailedField: "body",
+				Tag:         err.Error(),
+			},
+		}
+	}
+	if errArr := VOAHValidator.Validate(target); len(errArr) != 0 {
+		return errArr
+	}
+	return nil
 }
