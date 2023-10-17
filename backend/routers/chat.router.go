@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"implude.kr/VOAH-Official-Message/controllers/info"
+	"implude.kr/VOAH-Official-Message/controllers/chat"
 	"implude.kr/VOAH-Official-Message/middleware"
 	"implude.kr/VOAH-Official-Message/websockets"
 )
@@ -13,7 +13,7 @@ func addChat(router *fiber.App) {
 	chatGroup.Use(middleware.Authenticate)
 
 	chatGroup.Get("/", func(c *fiber.Ctx) error {
-		return info.GetInfoCtrl(c)
+		return chat.GetChatList(c)(c)
 	})
 
 	chatGroup.Get("/:id", websockets.WebsocketHandler)
