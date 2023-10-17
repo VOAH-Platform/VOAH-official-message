@@ -14,14 +14,8 @@ type Message struct {
 }
 
 func SendJson(c *fiber.Ctx) error {
-	body := new(Message)
-	if err := c.BodyParser(body); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"message": "Invalid request",
-		})
-	}
-
-	if errArr := validator.VOAHValidator.Validate(body); len(errArr) != 0 {
+	sendRequest := new(Message)
+	if errArr := validator.ParseAndValidate(c, sendRequest); len(errArr) != 0 {
 		return c.Status(400).JSON(fiber.Map{
 			"message": "Invalid request",
 			"error":   errArr,
@@ -30,16 +24,16 @@ func SendJson(c *fiber.Ctx) error {
 
 	db := database.DB
 	chat := models.Chat{
-		Content:   body.Content,
+		Content:   sendRequest.Content,
 		AuthorID:  c.Locals("user-id").(uuid.UUID),
-		ChannelID: body.ChannelId,
+		ChannelID: sendRequest.ChannelId,
 	}
 
 	if err := db.Create(&chat).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status": "error", 
-			"message": "Could not create chat", 
-			"data": err,
+			"status":  "error",
+			"message": "Could not create chat",
+			"data":    err,
 		})
 	}
 
