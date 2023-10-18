@@ -22,6 +22,8 @@ import './style.scss';
 // import { styled } from '@/stitches.config';
 
 export function Message({
+  order,
+  length,
   userId,
   priority,
   messageContent,
@@ -45,7 +47,11 @@ export function Message({
   [key: string]: unknown;
 }) {
   return (
-    <div style={{ marginTop: '0.75rem' }}>
+    <div
+      style={{ marginTop: '0.75rem' }}
+      className={
+        String(Number(length) - 1) == String(order) ? 'this' : undefined
+      }>
       {isMessageAnswering ? (
         <AnswerContent>
           <Reply

@@ -10,7 +10,7 @@ import (
 )
 
 type GetChatListRequest struct {
-	ChannelID string `json:"channel_id" validate:"required,uuid4"`
+	ChannelID string `json:"channel-id" validate:"required,uuid4"`
 	Count     int    `json:"count" validate:"required"`
 	Page      int    `json:"page" validate:"required"`
 }
@@ -28,7 +28,7 @@ func GetChatList(c *fiber.Ctx) error {
 	var chats []models.Chat
 
 	err := db.Where(&models.Chat{ChannelID: uuid.MustParse(getChatListRequest.ChannelID)}).
-		Order("CreatedAt").Offset(getChatListRequest.Page * getChatListRequest.Count).
+		Order("created_at").Offset(getChatListRequest.Page * getChatListRequest.Count).
 		Limit(getChatListRequest.Count).
 		Find(&chats).Error
 
@@ -40,7 +40,7 @@ func GetChatList(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(fiber.Map{
 		"success": true,
-		"modules": chats,
+		"chats":   chats,
 	})
 
 }

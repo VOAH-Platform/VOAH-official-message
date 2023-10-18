@@ -9,11 +9,11 @@ import (
 )
 
 type Message struct {
-	Content   string    `json:"content" validate:"required"`
-	ChannelId uuid.UUID `json:"channel_id" validate:"required,uuid4"`
+	Content   string `json:"content" validate:"required"`
+	ChannelID string `json:"channel-id" validate:"required,uuid4"`
 }
 
-func SendJson(c *fiber.Ctx) error {
+func SendChat(c *fiber.Ctx) error {
 	sendRequest := new(Message)
 	if errArr := validator.ParseAndValidate(c, sendRequest); len(errArr) != 0 {
 		return c.Status(400).JSON(fiber.Map{
@@ -26,14 +26,12 @@ func SendJson(c *fiber.Ctx) error {
 	chat := models.Chat{
 		Content:   sendRequest.Content,
 		AuthorID:  c.Locals("user-id").(uuid.UUID),
-		ChannelID: sendRequest.ChannelId,
+		ChannelID: uuid.MustParse(sendRequest.ChannelID),
 	}
 
 	if err := db.Create(&chat).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Could not create chat",
-			"data":    err,
+			"message": "Internal server error",
 		})
 	}
 
