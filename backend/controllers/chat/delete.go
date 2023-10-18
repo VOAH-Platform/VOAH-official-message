@@ -2,13 +2,15 @@ package chat
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"implude.kr/VOAH-Official-Message/database"
 	"implude.kr/VOAH-Official-Message/models"
 	"implude.kr/VOAH-Official-Message/utils/validator"
 )
 
 type DeleteChatRequest struct {
-	ChatID uint `json:"chat-id" validate:"required,uint"`
+	ChatID uint `json:"chat-id" validate:"required"`
 }
 
 func DeleteChat(c *fiber.Ctx) error {
@@ -20,9 +22,26 @@ func DeleteChat(c *fiber.Ctx) error {
 		})
 	}
 
+	var chat models.Chat
 	db := database.DB
+	err := db.Where(&models.Chat{ID: DeleteChatRequest.ChatID}).First(&chat).Error
+	if err == gorm.ErrRecordNotFound {
+		return c.Status(404).JSON(fiber.Map{
+			"message": "Chat not found",
+		})
+	} else if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"message": "Internal server error",
+		})
+	}
 
-	if err := db.Delete(&models.Chat{ID: DeleteChatRequest.ChatID}).Error; err != nil {
+	if chat.AuthorID != c.Locals("user-id").(uuid.UUID) {
+		return c.Status(403).JSON(fiber.Map{
+			"message": "You are not the author of this chat",
+		})
+	}
+
+	if db.Delete(chat); err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"message": "Internal server error",
 		})

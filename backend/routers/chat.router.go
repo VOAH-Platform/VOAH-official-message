@@ -22,7 +22,7 @@ func addChat(router *fiber.App) {
 	chatGroup.Post("/update", func(c *fiber.Ctx) error {
 		return chat.UpdateChat(c)
 	})
-	chatGroup.Get("/delete", func(c *fiber.Ctx) error {
+	chatGroup.Delete("/delete", func(c *fiber.Ctx) error {
 		return chat.DeleteChat(c)
 	})
 
