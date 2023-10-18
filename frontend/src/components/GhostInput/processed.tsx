@@ -1,7 +1,7 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 
 export function Processed(str: string) {
-  const [ProcessedStr, setProcessedStr] = useState('');
+  // const [ProcessedStr, setProcessedStr] = useState('');
   for (const i of str) {
     console.log(i);
   }

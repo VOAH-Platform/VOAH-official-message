@@ -20,14 +20,13 @@ import {
   Smile,
   Keyboard,
 } from 'lucide-react';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import { GhostInput } from '../GhostInput';
 
 import { Line } from './line';
 import {
   TextAreaWrapper,
-  InputText,
   TextForm,
   CommitBtn,
   TextOption,
@@ -49,7 +48,7 @@ export function TextArea({
   onChange?: (value: unknown) => void;
   [key: string]: unknown;
 }) {
-  const handleGhostInputHeightChange = (height: unknown) => {
+  const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
     // console.log(`divRef:${divRef.current?.offsetHeight!}`);
     onChange?.(divRef.current?.offsetHeight!);
