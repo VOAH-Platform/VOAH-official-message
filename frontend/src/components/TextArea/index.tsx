@@ -1,7 +1,7 @@
 import {
-  Asterisk,
-  Hexagon,
-  Minus,
+  // Asterisk,
+  // Hexagon,
+  // Minus,
   SendHorizontal,
   Upload,
   AlertCircle,
@@ -20,7 +20,9 @@ import {
   Smile,
   Keyboard,
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+
+import { GhostInput } from '../GhostInput';
 
 import { Line } from './line';
 import {
@@ -33,35 +35,35 @@ import {
   Typing,
   SelectMessageState,
   StateBox,
+  InputWrapper,
 } from './style';
 
 export function TextArea({
   writingUser,
   showSelectMessageState,
+  onChange,
   ...props
 }: {
   writingUser: Array<string>;
   showSelectMessageState: boolean;
+  onChange?: (value: unknown) => void;
   [key: string]: unknown;
 }) {
-  const [value, setValue] = useState('');
-  const textareaRef = useRef(null);
-  const hiddenTextareaRef = useRef(null);
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    // const hiddenTextarea = hiddenTextareaRef.current;
-
-    textarea.value = value;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-  }, [value]);
-
-  const handleChange = (e) => {
-    setValue(e.target.value);
+  const handleGhostInputHeightChange = (height: unknown) => {
+    // console.log('GhostInput height changed:', height);
+    // console.log(`divRef:${divRef.current?.offsetHeight!}`);
+    onChange?.(divRef.current?.offsetHeight!);
   };
+
+  const divRef = useRef<HTMLDivElement>(null);
+
+  // useEffect(() => {
+  //   console.log(`divRef22:${divRef.current?.offsetHeight!}`);
+  // }, [divRef, divRef.current, divRef.current?.offsetHeight!]);
+
   return (
-    <TextAreaWrapper {...props}>
+    <TextAreaWrapper ref={divRef} {...props}>
+      {/* <div style={{ width: '100vw' }} ref={divRef}> */}
       {showSelectMessageState ? (
         <SelectMessageState>
           <StateBox>
@@ -71,51 +73,63 @@ export function TextArea({
           <StateBox>일반 메시지</StateBox>
         </SelectMessageState>
       ) : null}
+      {/* <GhostInput /> */}
       <TextForm>
-        <InputText
-          ref={textareaRef}
-          value={value}
-          onChange={handleChange}
-          placeholder="공개SW개발자대회에 메시지 보내기"
-        />
+        <InputWrapper>
+          <GhostInput onChange={handleGhostInputHeightChange} />
+          {/* <InputText
+            ref={textareaRef}
+            value={value}
+            onChange={handleChange}
+            placeholder="#공개SW개발자대회에 메시지 보내기"
+          /> */}
+        </InputWrapper>
         <CommitBtn>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
       </TextForm>
       <TextOption>
-        <Upload color="#9099a6" size={25} style={{ cursor: 'pointer' }} />{' '}
-        {/* 팔래트 적용이 안돼요ㅜㅜ */}
-        <AlertCircle color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Upload size={25} color="#9099a6" style={{ cursor: 'pointer' }} />{' '}
+        <AlertCircle size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Line />
-        <Bold color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Italic color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Bold size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Italic size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Strikethrough
-          color="#9099a6"
           size={25}
+          color="#9099a6"
           style={{ cursor: 'pointer' }}
         />
-        <Underline color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Underline size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Line />
-        <Heading1 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Heading2 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Heading3 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Heading1 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Heading2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Heading3 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Line />
-        <Link color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Code2 color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <Quote color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <List color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
-        <ListOrdered color="#9099a6" size={25} />
+        <Link size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Code2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Quote
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer', color: '$gray400' }}
+        />
+        <List size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <ListOrdered size={25} color="#9099a6" />
         <Line />
-        <Smile color="#9099a6" size={25} style={{ cursor: 'pointer' }} />
+        <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
       </TextOption>
       <TypingWrapper>
-        <Keyboard color="#5f666d" size={20} style={{ cursor: 'pointer' }} />
+        <Keyboard
+          size={20}
+          color="#5f666d"
+          style={{ cursor: 'pointer', color: '$gray400' }}
+        />
         <Typing>
           {writingUser.length === 0
             ? null
-            : writingUser.map((e) => ' ' + e) + ' 님이 입력하고 있어요...'}
+            : `${writingUser.join(' ')} 님이 입력하고 있어요...`}
         </Typing>
       </TypingWrapper>
+      {/* </div> */}
     </TextAreaWrapper>
   );
 }

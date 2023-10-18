@@ -1,10 +1,11 @@
 package routers
 
 import (
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"implude.kr/VOAH-Official-Message/controllers/chat"
 	"implude.kr/VOAH-Official-Message/middleware"
-	"implude.kr/VOAH-Official-Message/websockets"
+	"implude.kr/VOAH-Official-Message/wshandler"
 )
 
 func addChat(router *fiber.App) {
@@ -14,7 +15,19 @@ func addChat(router *fiber.App) {
 
 	chatGroup.Get("/", func(c *fiber.Ctx) error {
 		return chat.GetChatList(c)
+<<<<<<< HEAD
+=======
+	})
+	chatGroup.Post("/send", func(c *fiber.Ctx) error {
+		return chat.SendChat(c)
+	})
+	chatGroup.Post("/update", func(c *fiber.Ctx) error {
+		return chat.UpdateChat(c)
+	})
+	chatGroup.Delete("/delete", func(c *fiber.Ctx) error {
+		return chat.DeleteChat(c)
+>>>>>>> main
 	})
 
-	chatGroup.Get("/:id", websockets.WebsocketHandler)
+	chatGroup.Get("/ws/:channel", websocket.New(wshandler.ChatWebsocket()))
 }

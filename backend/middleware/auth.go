@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"implude.kr/VOAH-Official-Message/configs"
 	"implude.kr/VOAH-Official-Message/utils/permission"
 	"implude.kr/VOAH-Official-Message/utils/validator"
@@ -38,10 +39,20 @@ func Authenticate(c *fiber.Ctx) error {
 		Get(configs.Env.Server.CoreInternalHost + "/api/check")
 
 	if err != nil {
+		fmt.Println(err)
 		return c.Status(500).JSON(fiber.Map{
 			"message": "Internal Server Error",
 		})
+	} else if resp.StatusCode() == 401 {
+		return c.Status(401).JSON(fiber.Map{
+			"message": "Unauthorized",
+		})
+	} else if resp.StatusCode() == 403 {
+		return c.Status(500).JSON(fiber.Map{
+			"message": "API-KEY is not valid",
+		})
 	} else if resp.StatusCode() != 200 {
+		fmt.Println(resp.StatusCode())
 		return c.Status(500).JSON(fiber.Map{
 			"message": "Internal Server Error",
 		})
@@ -50,6 +61,7 @@ func Authenticate(c *fiber.Ctx) error {
 	respObject := &CheckTokenResponse{}
 	fmt.Println(string(resp.Body()))
 	if err := json.Unmarshal(resp.Body(), respObject); err != nil {
+		fmt.Println(err)
 		return c.Status(500).JSON(fiber.Map{
 			"message": "Internal Server Error",
 		})
@@ -67,6 +79,6 @@ func Authenticate(c *fiber.Ctx) error {
 			"message": "Unauthorized",
 		})
 	}
-	c.Locals("user-id", respObject.UserID) // pass user id to next middleware
+	c.Locals("user-id", uuid.MustParse(respObject.UserID)) // pass user id to next middleware
 	return c.Next()
 }

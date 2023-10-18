@@ -1,6 +1,7 @@
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 import { useAtom } from 'jotai';
-
+import { useState, useEffect, useRef } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { themeAtom } from '@/atom';
 import { ExampleButton } from '@/components/ExampleButton';
 // eslint-disable-next-line import/namespace
@@ -11,8 +12,9 @@ import { THEME_TOKEN } from '@/constant';
 import { IndexWrapper } from './style';
 
 import './style.scss';
+import { is } from 'date-fns/locale';
 
-import { MessageStateData, UserStateData } from '@/components/Message/states';
+// import { MessageStateData, UserStateData } from '@/components/Message/states';
 
 // TODO: 위치 바꿔야함
 interface MessageData {
@@ -29,37 +31,37 @@ interface MessageData {
   }[];
 }
 
-interface UserData {
-  userId: string;
-  priority: number; // 0: default, 1: important, 2: emergency
-  message: {
-    content: string; //내용
-    date: number; //입력 시간
-    isEdited: boolean; //수정 여부
-  };
-  attachment: {
-    type: string; // image, video, audio, file
-    url: string;
-  }[];
-}
+// interface UserData {
+//   userId: string;
+//   priority: number; // 0: default, 1: important, 2: emergency
+//   message: {
+//     content: string; //내용
+//     date: number; //입력 시간
+//     isEdited: boolean; //수정 여부
+//   };
+//   attachment: {
+//     type: string; // image, video, audio, file
+//     url: string;
+//   }[];
+// }
 
-interface Profile {
-  lastActivity: number; //
-  lastRefresh: number;
-  message: string;
-  user: {
-    userId: string;
-    email: string;
-    username: string;
-    displayname: string;
-    position: string;
-    description: string;
-    teamId: string;
-    // roles: null;
-    // projects: null;
-    createdAt: Date;
-  };
-}
+// interface Profile {
+//   lastActivity: number; //
+//   lastRefresh: number;
+//   message: string;
+//   user: {
+//     userId: string;
+//     email: string;
+//     username: string;
+//     displayname: string;
+//     position: string;
+//     description: string;
+//     teamId: string;
+//     // roles: null;
+//     // projects: null;
+//     createdAt: Date;
+//   };
+// }
 
 function randomTimestamp() {
   const minTimestamp = Date.parse('2000-01-01T00:00:00Z'); // 시작 타임스탬프 (2000년 1월 1일)
@@ -92,17 +94,15 @@ function fetchMessageData(): MessageData {
 export function IndexPage() {
   const [, setTheme] = useAtom(themeAtom);
   const messages = [];
-
-  // if (new Date(Date.now() - Profile.lastRefresh).getMinutes > 30) {
-  //   if (new Date(Date.now() - Profile.lastActivity).getMinutes > 30) {
-  //   } else {
-  //   }
-  // } else {
-  // }
-
-  for (let i = 0; i <= 10; i++) {
+  let observe_target: Element;
+  for (let i = 0; i <= 1; i++) {
     messages.push(fetchMessageData());
   }
+
+  useEffect(() => {
+    observe_target = document.querySelector('.this') as Element;
+    intersectionObserver.observe(observe_target);
+  });
 
   const calcDate = (tar: number) => {
     const today = new Date(Date.now());
@@ -124,45 +124,108 @@ export function IndexPage() {
     return res;
   };
 
-  const message_list = messages
-    .map((content, index) => (
-      <Message
-        key={index}
-        userId={content.userId}
-        priority={content.priority}
-        messageContent={content.message.content}
-        messageDate={calcDate(content.message.date)}
-        messageIsEdited={content.message.isEdited}
-        attachmentType={content.attachment[0].type}
-        attachmentUrl={content.attachment[0].url}
-      />
-    ))
-    .reverse();
+  const before_list = messages.map((content, index) => (
+    <Message
+      key={index}
+      order={index}
+      length={messages.length - 1}
+      userId={content.userId}
+      priority={content.priority}
+      messageContent={content.message.content}
+      messageDate={calcDate(content.message.date)}
+      isMessageEdited={true}
+      isMessageAnswering={true}
+      AnsweringUserId={'홍길동'}
+      AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
+      attachmentType={content.attachment[0].type}
+      attachmentUrl={content.attachment[0].url}
+    />
+  ));
+
+  const intersectionObserver = new IntersectionObserver((entries) => {
+    console.log(entries[0].intersectionRatio);
+    if (entries[0].intersectionRatio > 0) {
+      intersectionObserver.disconnect();
+      console.log(entries[0].intersectionRatio);
+      const sample = [];
+      for (let i = 0; i < 2; i++) {
+        sample.push(fetchMessageData());
+      }
+      const n = sample.map((content, index) => (
+        <Message
+          key={index}
+          order={index}
+          length={messages.length - 1}
+          userId={content.userId}
+          priority={content.priority}
+          messageContent={content.message.content}
+          messageDate={calcDate(content.message.date)}
+          isMessageEdited={true}
+          isMessageAnswering={true}
+          AnsweringUserId={'홍길동'}
+          AnsweringMessage={'추가된거'}
+          attachmentType={content.attachment[0].type}
+          attachmentUrl={content.attachment[0].url}
+        />
+      )) as JSX.Element[];
+      setMessage_list([n, ...message_list]);
+    }
+    observe_target = document.querySelector('.this') as Element;
+    return;
+  });
+
+  // let message_list = before_list.reverse();
+  const [message_list, setMessage_list] = useState(before_list.reverse());
+  console.log(message_list);
+  // console.log(observe_target + '이거에유');
+
+  const divRef = useRef<HTMLDivElement>(null);
+
+  const element = document.documentElement;
+
+  const handleTextAreaHeightChange = (height: unknown) => {
+
+    const isScrollAtBottom = element.scrollHeight - element.scrollTop >= element.clientHeight;
+    const newMargin = height + 'px';
+
+    console.log(element.scrollHeight, element.scrollTop, element.clientHeight, isScrollAtBottom)
+
+    if (divRef.current) {
+      divRef.current.style.marginBottom = newMargin;
+    }
+    if(isScrollAtBottom) {
+      // window.scrollTo(0, element.scrollHeight);
+      element.scrollTop = element.scrollHeight;
+    }
+  };
 
   return (
     <IndexWrapper className="container">
-      VOAH TEMPLATE
-      <ExampleButton
-        onClick={() => setTheme({ token: THEME_TOKEN.LIGHT, isDark: false })}>
-        LIGHT
-      </ExampleButton>
-      <ExampleButton
-        onClick={() => setTheme({ token: THEME_TOKEN.DARK, isDark: true })}>
-        DARK
-      </ExampleButton>
-      <ExampleButton
-        onClick={() =>
-          setTheme({
-            token: THEME_TOKEN.SYSTEM,
-            isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
-          })
-        }>
-        SYSTEM
-      </ExampleButton>
-      <div>{message_list}</div>
+      <div ref={divRef}>
+        VOAH TEMPLATE
+        <ExampleButton
+          onClick={() => setTheme({ token: THEME_TOKEN.LIGHT, isDark: false })}>
+          LIGHT
+        </ExampleButton>
+        <ExampleButton
+          onClick={() => setTheme({ token: THEME_TOKEN.DARK, isDark: true })}>
+          DARK
+        </ExampleButton>
+        <ExampleButton
+          onClick={() =>
+            setTheme({
+              token: THEME_TOKEN.SYSTEM,
+              isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
+            })
+          }>
+          SYSTEM
+        </ExampleButton>
+        <div>{message_list}</div>
+      </div>
       <TextArea
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
         showSelectMessageState={false}
+        onChange={handleTextAreaHeightChange}
       />
     </IndexWrapper>
   );

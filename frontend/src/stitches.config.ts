@@ -186,6 +186,19 @@ export const globalStyles = globalCss({
       'color, background-color, border, box-shadow, fill, stop-color',
     transitionDuration: '0.15s',
     color: '$gray900',
+    '&::-webkit-scrollbar': {
+      width: '6px',
+      height: '6px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      width: '6px',
+      height: '6px',
+      background: '$gray300',
+      borderRadius: '10px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: 'transparent',
+    },
   },
   'html, body, #root': {
     margin: 0,

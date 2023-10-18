@@ -4,11 +4,15 @@ export const TextAreaWrapper = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   height: 'auto',
-  margin: '0 1rem',
+  // margin: '0 1rem',
   justifyContent: 'space-between',
   alignItems: 'center',
   alignSelf: 'stretch',
   background: '$gray0',
+  position: 'fixed',
+  width: '100vw',
+  bottom: '0',
+  left: '0',
 });
 
 export const SelectMessageState = styled('div', {
@@ -37,48 +41,57 @@ export const StateBox = styled('div', {
 /** 메시지 입력창과 전송 버튼 감쌈 */
 export const TextForm = styled('div', {
   display: 'flex',
-  position: 'relative',
+  gap: '0.25rem',
   width: '100%',
-  height: '3.375rem',
-  marginBottom: '0.5rem',
-  padding: '0.5rem 0.5rem 0.5rem 1.5rem',
+  maxHeight: '10rem',
+  overflowY: 'scroll',
+  margin: '0.5rem 0',
+  padding: '0.5rem',
   justifyContent: 'space-between',
   alignItems: 'center',
-  alignSelf: 'stretch',
+  border: '2px solid $gray200',
+  borderRadius: '1rem',
+});
+
+export const InputWrapper = styled('div', {
+  width: '100%',
+  paddingLeft: '0.5rem',
+  display: 'flex',
+  overflowY: 'scroll',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  background: '$gray0',
+  color: '$gray400',
+
+  '&::-webkit-scrollbar': {
+    margin: '4px 4px 4px 0',
+  },
 });
 
 /** 입력창 */
 export const InputText = styled('textarea', {
-  width: '95%',
-  maxHeight: '10rem',
-  paddingLeft: '1rem',
-  marginRight: '2rem',
-  position: 'absolute',
-  flex: 1,
-  verticalAlign: 'bottom',
+  margin: '0',
+  padding: '0',
+  width: '100%',
+  height: '100%',
+  maxHeight: '8.5rem',
   display: 'flex',
-  left: '0',
-  bottom: '0',
   resize: 'none',
-  overflowY: 'auto',
-  border: '2px solid $gray200',
+  overflowY: 'scroll',
+  border: 'none',
+  outline: 'none',
   background: '$gray0',
-  borderRadius: '1rem',
-  color: '$gray-400',
+  color: '$gray400',
   fontFamily: 'SUIT',
   fontSize: '1rem',
   fontStyle: 'normal',
   fontWeight: '500',
-  lineHeight: '140%' /* 22.4px */,
   letterSpacing: '-0.16px',
 });
 
 export const CommitBtn = styled('button', {
   width: '3.25rem',
   height: '3.25rem',
-  position: 'absolute',
-  right: '0',
-  float: 'right',
   border: '2px solid $gray200',
   borderRadius: '1rem',
   background: '$secondary400',
@@ -106,6 +119,7 @@ export const TypingWrapper = styled('div', {
   width: '100%',
   display: 'flex',
   alignItems: 'center',
+  margin: '0.25rem',
 });
 
 /** -님이 입력중 */
