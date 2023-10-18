@@ -12,6 +12,7 @@ import { THEME_TOKEN } from '@/constant';
 import { IndexWrapper } from './style';
 
 import './style.scss';
+import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
 
@@ -186,18 +187,25 @@ export function IndexPage() {
     };
   }, [window.scrollY]);
 
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const divRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Get the height of the first component
-    const height = textAreaRef.current?.clientHeight;
+  const element = document.documentElement;
 
-    // Use the height to set the margin of the second component
+  const handleTextAreaHeightChange = (height: unknown) => {
+
+    const isScrollAtBottom = element.scrollHeight - element.scrollTop >= element.clientHeight;
+    const newMargin = height + 'px';
+
+    console.log(element.scrollHeight, element.scrollTop, element.clientHeight, isScrollAtBottom)
+
     if (divRef.current) {
-      divRef.current.style.marginTop = `${height}px`;
+      divRef.current.style.marginBottom = newMargin;
     }
-  }, []);
+    if(isScrollAtBottom) {
+      // window.scrollTo(0, element.scrollHeight);
+      element.scrollTop = element.scrollHeight;
+    }
+  };
 
   return (
     <IndexWrapper className="container">
@@ -226,9 +234,9 @@ export function IndexPage() {
         </div>
       </div>
       <TextArea
-        ref={textAreaRef}
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
         showSelectMessageState={false}
+        onChange={handleTextAreaHeightChange}
       />
     </IndexWrapper>
   );

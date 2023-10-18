@@ -24,7 +24,9 @@ export function GhostInput({
   useEffect(() => {
     console.log(input.split('\n'));
     setInputHeight(divRef.current?.offsetHeight!);
+    // console.log(`offSetHeight:${divRef.current?.offsetHeight!}`);
     setInputWidth(divRef.current?.offsetWidth!);
+    onChangeT(divRef.current?.scrollHeight!);
   }, [divRef, divRef.current, input]);
 
   return (

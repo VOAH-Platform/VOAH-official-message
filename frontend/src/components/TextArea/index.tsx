@@ -41,14 +41,29 @@ import {
 export function TextArea({
   writingUser,
   showSelectMessageState,
+  onChange,
   ...props
 }: {
   writingUser: Array<string>;
   showSelectMessageState: boolean;
+  onChange?: (value: unknown) => void;
   [key: string]: unknown;
 }) {
+  const handleGhostInputHeightChange = (height: unknown) => {
+    // console.log('GhostInput height changed:', height);
+    // console.log(`divRef:${divRef.current?.offsetHeight!}`);
+    onChange?.(divRef.current?.offsetHeight!);
+  };
+
+  const divRef = useRef<HTMLDivElement>(null);
+
+  // useEffect(() => {
+  //   console.log(`divRef22:${divRef.current?.offsetHeight!}`);
+  // }, [divRef, divRef.current, divRef.current?.offsetHeight!]);
+
   return (
-    <TextAreaWrapper {...props}>
+    <TextAreaWrapper ref={divRef} {...props}>
+      {/* <div style={{ width: '100vw' }} ref={divRef}> */}
       {showSelectMessageState ? (
         <SelectMessageState>
           <StateBox>
@@ -61,7 +76,7 @@ export function TextArea({
       {/* <GhostInput /> */}
       <TextForm>
         <InputWrapper>
-          <GhostInput />
+          <GhostInput onChange={handleGhostInputHeightChange} />
           {/* <InputText
             ref={textareaRef}
             value={value}
@@ -114,6 +129,7 @@ export function TextArea({
             : `${writingUser.join(' ')} 님이 입력하고 있어요...`}
         </Typing>
       </TypingWrapper>
+      {/* </div> */}
     </TextAreaWrapper>
   );
 }
