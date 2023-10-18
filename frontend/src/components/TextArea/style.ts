@@ -48,13 +48,15 @@ export const TextForm = styled('div', {
   margin: '0.5rem 0',
   padding: '0.5rem',
   justifyContent: 'space-between',
-  alignItems: 'center',
+  alignItems: 'flex-end',
   border: '2px solid $gray200',
   borderRadius: '1rem',
 });
 
 export const InputWrapper = styled('div', {
   width: '100%',
+  height: '100%',
+  maxHeight: '10rem',
   paddingLeft: '0.5rem',
   display: 'flex',
   overflowY: 'scroll',

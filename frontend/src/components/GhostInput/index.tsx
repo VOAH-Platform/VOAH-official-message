@@ -87,10 +87,11 @@ export function GhostInput({
   return (
     <div
       style={{
+        margin: '0.5rem 0',
         height: '100%',
         width: '100%',
-        display: 'flex',
         position: 'relative',
+        overflow: 'hidden',
       }}>
       <textarea
         id="ghost"
@@ -121,10 +122,10 @@ export function GhostInput({
         ref={divRef}
         style={{
           width: '100%',
-          height: '100%',
+          minHeight: '100%',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
+          justifyContent: 'flex-end',
           alignItems: 'flex-start',
         }}
         onClick={() => {

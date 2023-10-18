@@ -1,7 +1,7 @@
 // import { format } from 'date-fns';
 import { useAtom } from 'jotai';
 import { useState, useEffect, useRef } from 'react';
-import { useInView } from 'react-intersection-observer';
+// import { useInView } from 'react-intersection-observer';
 import { themeAtom } from '@/atom';
 import { ExampleButton } from '@/components/ExampleButton';
 // eslint-disable-next-line import/namespace
@@ -12,7 +12,7 @@ import { THEME_TOKEN } from '@/constant';
 import { IndexWrapper } from './style';
 
 import './style.scss';
-import { is } from 'date-fns/locale';
+// import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
 
@@ -168,7 +168,7 @@ export function IndexPage() {
           attachmentUrl={content.attachment[0].url}
         />
       )) as JSX.Element[];
-      setMessage_list([n, ...message_list]);
+      setMessage_list((prev_message) => [...n, ...prev_message]);
     }
     observe_target = document.querySelector('.this') as Element;
     return;
@@ -184,16 +184,21 @@ export function IndexPage() {
   const element = document.documentElement;
 
   const handleTextAreaHeightChange = (height: unknown) => {
-
-    const isScrollAtBottom = element.scrollHeight - element.scrollTop >= element.clientHeight;
+    const isScrollAtBottom =
+      element.scrollHeight - element.scrollTop >= element.clientHeight;
     const newMargin = height + 'px';
 
-    console.log(element.scrollHeight, element.scrollTop, element.clientHeight, isScrollAtBottom)
+    console.log(
+      element.scrollHeight,
+      element.scrollTop,
+      element.clientHeight,
+      isScrollAtBottom,
+    );
 
     if (divRef.current) {
       divRef.current.style.marginBottom = newMargin;
     }
-    if(isScrollAtBottom) {
+    if (isScrollAtBottom) {
       // window.scrollTo(0, element.scrollHeight);
       element.scrollTop = element.scrollHeight;
     }
