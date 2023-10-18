@@ -4,11 +4,15 @@ export const TextAreaWrapper = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   height: 'auto',
-  margin: '0 1rem',
+  // margin: '0 1rem',
   justifyContent: 'space-between',
   alignItems: 'center',
   alignSelf: 'stretch',
   background: '$gray0',
+  position: 'fixed',
+  width: '100vw',
+  bottom: '0',
+  left: '0',
 });
 
 export const SelectMessageState = styled('div', {
@@ -115,6 +119,7 @@ export const TypingWrapper = styled('div', {
   width: '100%',
   display: 'flex',
   alignItems: 'center',
+  margin: '0.25rem',
 });
 
 /** -님이 입력중 */

@@ -1,6 +1,6 @@
 // import { format } from 'date-fns';
 import { useAtom } from 'jotai';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { themeAtom } from '@/atom';
 import { ExampleButton } from '@/components/ExampleButton';
@@ -12,6 +12,7 @@ import { THEME_TOKEN } from '@/constant';
 import { IndexWrapper } from './style';
 
 import './style.scss';
+import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
 
@@ -178,30 +179,53 @@ export function IndexPage() {
   console.log(message_list);
   // console.log(observe_target + '이거에유');
 
+  const divRef = useRef<HTMLDivElement>(null);
+
+  const element = document.documentElement;
+
+  const handleTextAreaHeightChange = (height: unknown) => {
+
+    const isScrollAtBottom = element.scrollHeight - element.scrollTop >= element.clientHeight;
+    const newMargin = height + 'px';
+
+    console.log(element.scrollHeight, element.scrollTop, element.clientHeight, isScrollAtBottom)
+
+    if (divRef.current) {
+      divRef.current.style.marginBottom = newMargin;
+    }
+    if(isScrollAtBottom) {
+      // window.scrollTo(0, element.scrollHeight);
+      element.scrollTop = element.scrollHeight;
+    }
+  };
+
   return (
     <IndexWrapper className="container">
-      VOAH TEMPLATE
-      <ExampleButton
-        onClick={() => setTheme({ token: THEME_TOKEN.LIGHT, isDark: false })}>
-        LIGHT
-      </ExampleButton>
-      <ExampleButton
-        onClick={() => setTheme({ token: THEME_TOKEN.DARK, isDark: true })}>
-        DARK
-      </ExampleButton>
-      <ExampleButton
-        onClick={() =>
-          setTheme({
-            token: THEME_TOKEN.SYSTEM,
-            isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
-          })
-        }>
-        SYSTEM
-      </ExampleButton>
-      <div>{message_list}</div>
+      <div ref={divRef}>
+        VOAH TEMPLATE
+        <ExampleButton
+          onClick={() => setTheme({ token: THEME_TOKEN.LIGHT, isDark: false })}>
+          LIGHT
+        </ExampleButton>
+        <ExampleButton
+          onClick={() => setTheme({ token: THEME_TOKEN.DARK, isDark: true })}>
+          DARK
+        </ExampleButton>
+        <ExampleButton
+          onClick={() =>
+            setTheme({
+              token: THEME_TOKEN.SYSTEM,
+              isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
+            })
+          }>
+          SYSTEM
+        </ExampleButton>
+        <div>{message_list}</div>
+      </div>
       <TextArea
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
         showSelectMessageState={false}
+        onChange={handleTextAreaHeightChange}
       />
     </IndexWrapper>
   );
