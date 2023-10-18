@@ -38,7 +38,8 @@ export function GhostInput({
     }
 
     const pattern = new RegExp(escapedSubject + '(.*?)' + escapedSubject, 'g');
-    let replacedStr = input.replace(pattern, (match, innerContent) => {
+    let replacedStr = input.replace(pattern, (_, innerContent) => {
+      //임시로 match를 _로 바꿈
       return subject + tag1 + innerContent + tag2 + subject;
     });
 
