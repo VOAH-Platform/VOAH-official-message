@@ -48,4 +48,6 @@ func UpdateChannel(c *fiber.Ctx) error {
 			"message": "Internal server error",
 		})
 	}
+
+	return c.Status(201).JSON(fiber.Map{"status": "success"})
 }
