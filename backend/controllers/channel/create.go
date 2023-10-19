@@ -1,6 +1,7 @@
 package channel
 
 import (
+	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"implude.kr/VOAH-Official-Message/configs"
@@ -80,10 +81,42 @@ func CreateChannel(c *fiber.Ctx) error {
 		})
 	}
 
-	//TODO: Inject channel admin permission to user
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("API-KEY", configs.Env.Server.CoreAPIKey).
+		SetBody(InjectPermissionRequest{
+			Type:     "channel",
+			Scope:    "admin",
+			TargetID: channel.ID.String(),
+			UserID:   c.Locals("user-id").(uuid.UUID).String(),
+		}).
+		Post(configs.Env.Server.CoreInternalHost + "/api/server/permission/injectuser")
+	if err != nil {
+		log.Error(err.Error())
+		return c.Status(500).JSON(fiber.Map{
+			"message": "Internal server error",
+		})
+	} else if resp.StatusCode() == 403 {
+		log.Error("API-KEY is not valid")
+		return c.Status(500).JSON(fiber.Map{
+			"message": "API-KEY is not valid",
+		})
+	} else if resp.StatusCode() != 200 {
+		log.Error(resp.String())
+		return c.Status(500).JSON(fiber.Map{
+			"message": "Internal server error",
+		})
+	}
 
 	return c.Status(200).JSON(fiber.Map{
 		"success": true,
 	})
 
+}
+
+type InjectPermissionRequest struct {
+	Type     string `json:"type"`
+	Scope    string `json:"scope"`
+	TargetID string `json:"target-id"`
+	UserID   string `json:"user-id"`
 }
