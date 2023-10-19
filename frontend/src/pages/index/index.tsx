@@ -109,13 +109,14 @@ function randomTimestamp() {
 function fetchMessageData(): MessageData {
   return {
     userId: 'user123',
-    priority: 1,//남겨
+    priority: 1, //남겨
     message: {
       content: '우리는 성실한 핫산이다!',
       date: randomTimestamp(),
       isEdited: false,
     },
-    attachment: [//남겨
+    attachment: [
+      //남겨
       {
         type: 'image',
         url: 'https://example.com',
@@ -237,7 +238,7 @@ export function IndexPage() {
     }
   };
 
-  getMessage(
+  const data = getMessage(
     'https://test-voah-message.zirr.al',
     {
       'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
@@ -250,6 +251,8 @@ export function IndexPage() {
       'Content-Type': 'application/json',
     },
   );
+
+  console.log(data);
 
   return (
     <IndexWrapper className="container">

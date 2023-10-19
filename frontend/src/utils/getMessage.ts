@@ -1,12 +1,12 @@
-import axios, {AxiosHeaders} from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
-interface getMessageBody {
+export interface getMessageBody {
   'channel-id': string;
   count: number;
   page: number;
 }
 
-interface getMessageHeader extends AxiosHeaders{
+export interface getMessageHeader {
   Authorization: string;
   'Content-Type': 'application/json';
 }
@@ -16,8 +16,15 @@ export const getMessage = (
   body: getMessageBody,
   header: getMessageHeader,
 ) => {
+  const axiosConfig: AxiosRequestConfig = {
+    headers: {
+      ...header,
+    },
+    params: body,
+  };
+
   return axios
-    .get(url, { headers: header, params: body })
+    .get(url, axiosConfig)
     .then((response) => {
       console.log(response.data);
     })
