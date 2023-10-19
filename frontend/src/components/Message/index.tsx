@@ -86,7 +86,7 @@ export function Message({
             {/* {mention === null ? '' : <Mention>{'@' + mention}</Mention>} */}
             {messageContent}
             {isMessageEdited ? (
-              <OtherHeaderText>편집됨</OtherHeaderText>
+              <OtherHeaderText>(수정됨)</OtherHeaderText>
             ) : (
               <></>
             )}
