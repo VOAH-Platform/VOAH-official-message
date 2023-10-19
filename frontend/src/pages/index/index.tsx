@@ -238,7 +238,7 @@ export function IndexPage() {
     }
   };
 
-  getMessage(
+  const data = getMessage(
     'https://test-voah-message.zirr.al',
     {
       'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
@@ -251,6 +251,8 @@ export function IndexPage() {
       'Content-Type': 'application/json',
     },
   );
+
+  console.log(data);
 
   return (
     <IndexWrapper className="container">
