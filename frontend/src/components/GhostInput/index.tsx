@@ -114,6 +114,7 @@ export function GhostInput({
                 fontSize: '1rem',
                 letterSpacing: '-0.01rem',
                 wordBreak: 'break-all',
+                whiteSpace: 'pre',
               }}
               key={key}></span>
           ))

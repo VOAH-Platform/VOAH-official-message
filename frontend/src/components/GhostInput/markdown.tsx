@@ -2,13 +2,15 @@ const replacingMap: {
   [key: string]: string[];
 } = {
   bold: ['**', '<span style="text-shadow:0px 0px 1px black;">', '</span>'],
-  italic: ['*', '<i>', '</i>'],
-  italic3: ['_', '<i>', '</i>'],
+  italic1: ['*', '<i>', '</i>'],
+  italic2: ['_', '<i>', '</i>'],
   swung: ['~~', '<s>', '</s>'],
   underLine: ['__', '<u>', '</u>'],
+  quote: ['`', '<code>', '</code>'],
   h3: ['### ', '#', ''],
   h2: ['## ', '#', ''],
   h1: ['# ', '#', ''],
+  list: ['- ', '-', ''],
 };
 
 /** ~~(문)~~ -> ~~<t1>(문)<t2>~~으로 바꾸는 것처럼. 특정 문자기호에 대하여 감싸진 부분을 태그로 적용하는 함수 */
@@ -19,7 +21,6 @@ function replaceStr(
   tag2: string,
 ): string {
   const escapedSubject = subject.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
-
   if (tag2 === '') {
     // 줄의 마지막까지 포함하여 header markdown을 찾는 패턴을 사용
     const pattern = new RegExp(
