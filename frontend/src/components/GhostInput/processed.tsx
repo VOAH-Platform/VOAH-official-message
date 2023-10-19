@@ -2,8 +2,8 @@
 
 export function Processed(str: string) {
   // const [ProcessedStr, setProcessedStr] = useState('');
-  for (const i of str) {
-    console.log(i);
-  }
+  // for (const i of str) {
+  //   console.log(i);
+  // }
   return str;
 }

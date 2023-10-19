@@ -12,7 +12,11 @@ import { THEME_TOKEN } from '@/constant';
 import { IndexWrapper } from './style';
 
 import './style.scss';
-import { getMessage } from '@/utils/getMessage';
+import {
+  getMessage,
+  getMessageBody,
+  getMessageHeader,
+} from '@/utils/getMessage';
 // import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
@@ -241,10 +245,10 @@ export function IndexPage() {
   };
 
   const intersectionObserver = new IntersectionObserver((entries) => {
-    console.log(entries[0].intersectionRatio);
+    // console.log(entries[0].intersectionRatio);
     if (entries[0].intersectionRatio > 0) {
       intersectionObserver.disconnect();
-      console.log(entries[0].intersectionRatio);
+      // console.log(entries[0].intersectionRatio);
       const sample = [];
       for (let i = 0; i < 2; i++) {
         sample.push(fetchMessageData());
@@ -274,10 +278,8 @@ export function IndexPage() {
   });
 
   // let message_list = before_list.reverse();
-  const [message_list, setMessage_list] = useState(
-    before_list(messages).reverse(),
-  );
-  console.log(message_list);
+  const [message_list, setMessage_list] = useState(before_list.reverse());
+  // console.log(message_list);
   // console.log(observe_target + '이거에유');
 
   const divRef = useRef<HTMLDivElement>(null);
@@ -289,12 +291,12 @@ export function IndexPage() {
       element.scrollHeight - element.scrollTop >= element.clientHeight;
     const newMargin = height + 'px';
 
-    console.log(
-      element.scrollHeight,
-      element.scrollTop,
-      element.clientHeight,
-      isScrollAtBottom,
-    );
+    // console.log(
+    //   element.scrollHeight,
+    //   element.scrollTop,
+    //   element.clientHeight,
+    //   isScrollAtBottom,
+    // );
 
     if (divRef.current) {
       divRef.current.style.marginBottom = newMargin;
@@ -305,21 +307,31 @@ export function IndexPage() {
     }
   };
 
-  const data = getMessage(
-    'https://test-voah-message.zirr.al',
-    {
-      'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
-      count: 50,
-      page: 1,
-    },
-    {
-      Authorization:
-        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc3MDg5NzIsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.Ss0SdiLaYyROW8izLjPZsUofIgXMiWwuDk_zX2KWzik',
-      'Content-Type': 'application/json',
-    },
-  );
+  const fetchData = async () => {
+    try {
+      const data = await getMessage(
+        'https://test-voah-message.zirr.al/api/chat',
+        {
+          'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
+          count: 50,
+          page: 1,
+        } as getMessageBody,
+        {
+          Authorization:
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc3MjI3NzYsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.aFJ0VFx5W4FVYgkv-SYOhqprUPGqQK0smrrFZP8Jg2o',
+          'Content-Type': 'application/json',
+        } as getMessageHeader,
+      );
 
-  console.log(data);
+      console.log(data);
+    } catch (error: any) {
+      console.error('Error fetching data:', error.message || error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <IndexWrapper className="container">

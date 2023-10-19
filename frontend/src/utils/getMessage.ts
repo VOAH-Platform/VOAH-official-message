@@ -1,5 +1,9 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
+axios.create({
+  baseURL: window.location.href,
+});
+
 export interface getMessageBody {
   'channel-id': string;
   count: number;
@@ -23,12 +27,16 @@ export const getMessage = (
     params: body,
   };
 
-  return axios
-    .get(url, axiosConfig)
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error.message || error);
-    });
+  return (
+    axios
+      .get(url, axiosConfig)
+      // .then((response) => {
+      //   console.log(response.data);
+      // })
+      .catch((error) => {
+        console.error('Error:', error.message || error);
+      })
+  );
 };
+
+// export const postMessage = ()

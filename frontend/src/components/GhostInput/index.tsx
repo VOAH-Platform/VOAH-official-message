@@ -77,8 +77,8 @@ export function GhostInput({
   }
 
   useEffect(() => {
-    console.log(input.split('\n'));
-    console.log(processing(input.split('\n')[0]));
+    // console.log(input.split('\n'));
+    // console.log(processing(input.split('\n')[0]));
     setInputHeight(divRef.current?.offsetHeight!);
     // console.log(`offSetHeight:${divRef.current?.offsetHeight!}`);
     setInputWidth(divRef.current?.offsetWidth!);
