@@ -32,6 +32,24 @@ interface MessageData {
   }[];
 }
 
+interface CoreData {
+  'last-activity': number;
+  'last-refresh': number;
+  message: string;
+  user: {
+    'user-id': string;
+    email: string;
+    username: string;
+    displayname: string;
+    position: string;
+    description: string;
+    'team-id': string;
+    roles: null;
+    projects: null;
+    'created-at': string;
+  };
+}
+
 // {
 //     "chats": [
 //         {
@@ -113,8 +131,8 @@ function fetchMessageData(): MessageData {
     Content: '안녕 친구들 안녕 친구들',
     AuthorID: '11111',
     ChannelID: 'sadasd',
-    'created-at': 'gyuiu',
-    'updated-at': 'sadadsda',
+    'created-at': '2023-10-19T09:04:01.597615Z',
+    'updated-at': '2023-10-19T09:04:01.597615Z',
     attachment: [
       //남겨,
       {
@@ -122,6 +140,26 @@ function fetchMessageData(): MessageData {
         url: 'https://example.com',
       },
     ],
+  };
+}
+
+function fetchCoreData(): CoreData {
+  return {
+    'last-activity': 1693744734,
+    'last-refresh': 1693744734,
+    message: 'Success',
+    user: {
+      'user-id': '456328f5-02db-408b-989f-b17566ae0a58',
+      email: 'seonwoo0808@implude.kr',
+      username: 'PENTAGON',
+      displayname: 'PENTAGON',
+      position: 'BE',
+      description: '',
+      'team-id': 'b6732d10-612c-4925-80bb-083b47705177',
+      roles: null,
+      projects: null,
+      'created-at': '2023-09-03T21:38:54.413202+09:00',
+    },
   };
 }
 
@@ -140,8 +178,12 @@ export function IndexPage() {
 
   const calcDate = (tar: string) => {
     const today = new Date(Date.now());
+    console.log(tar);
     const textday = new Date(tar);
+    console.log(textday);
     let res: string;
+    const wow = new Date(textday);
+    console.log(wow);
     if (today.getDate() - textday.getDate() == 0) {
       res = '오늘';
     } else if (today.getDate() - textday.getDate() == 1) {
@@ -150,31 +192,53 @@ export function IndexPage() {
       res = textday.getMonth() + '월 ' + textday.getDate() + '일';
     }
     if (textday.getHours() > 12) {
-      res += ' 오후 ' + (textday.getHours() - 12) + ':';
+      let hour = textday.getHours() - 12;
+      if (hour < 10) {
+        res += ' 오후 0' + hour + ':';
+      } else {
+        res += ' 오후 ' + hour + ':';
+      }
     } else {
-      res += ' 오전 ' + textday.getHours() + ':';
+      let hour = textday.getHours();
+      if (hour < 10) {
+        res += ' 오전 0' + hour + ':';
+      } else {
+        res += ' 오전 ' + hour + ':';
+      }
     }
-    res += textday.getMinutes();
+    if (textday.getMinutes() > 10) {
+      let hour = textday.getMinutes();
+      res += hour;
+    } else {
+      let hour = textday.getMinutes();
+      res += '0' + hour;
+    }
     return res;
   };
 
-  const before_list = messages.map((content, index) => (
-    <Message
-      key={index}
-      order={index}
-      length={messages.length - 1}
-      userId={content.id}
-      priority={content.priority}
-      messageContent={content.Content}
-      messageDate={calcDate(content['created-at'])}
-      isMessageEdited={true}
-      isMessageAnswering={true}
-      AnsweringUserId={'홍길동'}
-      AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
-      attachmentType={content.attachment[0].type}
-      attachmentUrl={content.attachment[0].url}
-    />
-  ));
+  const before_list = (messages: any) => {
+    const user_info = fetchCoreData() as CoreData;
+    const a = messages as any[];
+    return a.map((content, index) => (
+      <Message
+        key={index}
+        order={index}
+        length={messages.length - 1}
+        userId={user_info.user.displayname}
+        priority={content.priority}
+        messageContent={content.Content}
+        messageDate={calcDate(content['created-at'])}
+        isMessageEdited={
+          content['created-at'] == content['updated-at'] ? true : false
+        }
+        isMessageAnswering={true}
+        AnsweringUserId={'홍길동'}
+        AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
+        attachmentType={content.attachment[0].type}
+        attachmentUrl={content.attachment[0].url}
+      />
+    ));
+  };
 
   const intersectionObserver = new IntersectionObserver((entries) => {
     console.log(entries[0].intersectionRatio);
@@ -185,12 +249,13 @@ export function IndexPage() {
       for (let i = 0; i < 2; i++) {
         sample.push(fetchMessageData());
       }
+      const user_info = fetchCoreData() as CoreData;
       const n = sample.map((content, index) => (
         <Message
           key={Math.random()}
           order={index}
           length={messages.length - 1}
-          userId={content.id}
+          userId={user_info.user.displayname}
           priority={content.priority}
           messageContent={content.Content}
           messageDate={calcDate(content['created-at'])}
@@ -202,14 +267,16 @@ export function IndexPage() {
           attachmentUrl={content.attachment[0].url}
         />
       )) as JSX.Element[];
-      setMessage_list((prev_message) => [...n, ...prev_message]);
+      setMessage_list((prev_message: any[]) => [...n, ...prev_message]);
     }
     observe_target = document.querySelector('.this') as Element;
     return;
   });
 
   // let message_list = before_list.reverse();
-  const [message_list, setMessage_list] = useState(before_list.reverse());
+  const [message_list, setMessage_list] = useState(
+    before_list(messages).reverse(),
+  );
   console.log(message_list);
   // console.log(observe_target + '이거에유');
 

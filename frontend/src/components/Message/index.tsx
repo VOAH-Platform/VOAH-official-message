@@ -34,7 +34,7 @@ export function Message({
   AnsweringUserId, // attachmentType,attachmentUrl,
 }: {
   // ...props
-  userId: number;
+  userId: string;
   priority: number;
   messageContent: string;
   messageDate: string;
