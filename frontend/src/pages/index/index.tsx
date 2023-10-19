@@ -19,13 +19,13 @@ import { getMessage } from '@/utils/getMessage';
 
 // TODO: 위치 바꿔야함
 interface MessageData {
-  userId: string;
+  id: number;
   priority: number; // 0: default, 1: important, 2: emergency
-  message: {
-    content: string; //내용
-    date: number; //입력 시간
-    isEdited: boolean; //수정 여부
-  };
+  Content: string;
+  AuthorID: string;
+  ChannelID: string;
+  'created-at': string;
+  'updated-at': string;
   attachment: {
     type: string; // image, video, audio, file
     url: string;
@@ -108,14 +108,15 @@ function randomTimestamp() {
 
 function fetchMessageData(): MessageData {
   return {
-    userId: 'user123',
-    priority: 1,//남겨
-    message: {
-      content: '우리는 성실한 핫산이다!',
-      date: randomTimestamp(),
-      isEdited: false,
-    },
-    attachment: [//남겨
+    id: 1,
+    priority: 1, //남겨
+    Content: '안녕 친구들 안녕 친구들',
+    AuthorID: '11111',
+    ChannelID: 'sadasd',
+    'created-at': 'gyuiu',
+    'updated-at': 'sadadsda',
+    attachment: [
+      //남겨,
       {
         type: 'image',
         url: 'https://example.com',
@@ -137,7 +138,7 @@ export function IndexPage() {
     intersectionObserver.observe(observe_target);
   });
 
-  const calcDate = (tar: number) => {
+  const calcDate = (tar: string) => {
     const today = new Date(Date.now());
     const textday = new Date(tar);
     let res: string;
@@ -162,10 +163,10 @@ export function IndexPage() {
       key={index}
       order={index}
       length={messages.length - 1}
-      userId={content.userId}
+      userId={content.id}
       priority={content.priority}
-      messageContent={content.message.content}
-      messageDate={calcDate(content.message.date)}
+      messageContent={content.Content}
+      messageDate={calcDate(content['created-at'])}
       isMessageEdited={true}
       isMessageAnswering={true}
       AnsweringUserId={'홍길동'}
@@ -189,14 +190,14 @@ export function IndexPage() {
           key={index}
           order={index}
           length={messages.length - 1}
-          userId={content.userId}
+          userId={content.id}
           priority={content.priority}
-          messageContent={content.message.content}
-          messageDate={calcDate(content.message.date)}
+          messageContent={content.Content}
+          messageDate={calcDate(content['created-at'])}
           isMessageEdited={true}
           isMessageAnswering={true}
           AnsweringUserId={'홍길동'}
-          AnsweringMessage={'추가된거'}
+          AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
           attachmentType={content.attachment[0].type}
           attachmentUrl={content.attachment[0].url}
         />

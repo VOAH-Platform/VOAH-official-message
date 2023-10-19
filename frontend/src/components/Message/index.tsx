@@ -34,7 +34,7 @@ export function Message({
   AnsweringUserId, // attachmentType,attachmentUrl,
 }: {
   // ...props
-  userId: string;
+  userId: number;
   priority: number;
   messageContent: string;
   messageDate: string;
@@ -81,15 +81,15 @@ export function Message({
             <MessageState showComponent={getMessageStateClassName(priority)} />
             <Writer>{userId}</Writer>
             <OtherHeaderText>{messageDate}</OtherHeaderText> {/* date */}
+          </MessageHeader>
+          <Text>
+            {/* {mention === null ? '' : <Mention>{'@' + mention}</Mention>} */}
+            {messageContent}
             {isMessageEdited ? (
               <OtherHeaderText>편집됨</OtherHeaderText>
             ) : (
               <></>
             )}
-          </MessageHeader>
-          <Text>
-            {/* {mention === null ? '' : <Mention>{'@' + mention}</Mention>} */}
-            {messageContent}
           </Text>
         </Content>
       </MessageWrapper>
