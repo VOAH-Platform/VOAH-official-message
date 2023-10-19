@@ -10,21 +10,25 @@ const (
 type ObjectType string
 
 const (
-	Team    ObjectType = "team"
-	Project ObjectType = "project"
-	Company ObjectType = "company"
-	Channel ObjectType = "channel"
+	SystemObject  ObjectType = "system"
+	RootObject    ObjectType = "root"
+	ProjectObject ObjectType = "project"
+	TeamObject    ObjectType = "team"
+	CompanyObject ObjectType = "company"
+	ChannelObject ObjectType = "channel"
 )
 
 type PermissionScope string
 
 const (
-	ChatRead  PermissionScope = "chat:read"
-	ChatWrite PermissionScope = "chat:write"
+	AdminPermissionScope PermissionScope = "admin"
+	EditPermissionScope  PermissionScope = "edit"
+	ReadPermissionScope  PermissionScope = "read"
+	WritePermissionScope PermissionScope = "write"
 )
 
 var (
 	ModuleDeps             = []string{}
-	ModuleObjectTypes      = []ObjectType{Team, Project, Company, Channel}
-	ModulePermissionScopes = []PermissionScope{ChatRead, ChatWrite}
+	ModuleObjectTypes      = []ObjectType{SystemObject, RootObject, ProjectObject, TeamObject, CompanyObject, ChannelObject}
+	ModulePermissionScopes = []PermissionScope{AdminPermissionScope, EditPermissionScope, ReadPermissionScope, WritePermissionScope}
 )

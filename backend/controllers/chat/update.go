@@ -4,8 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"implude.kr/VOAH-Official-Message/configs"
 	"implude.kr/VOAH-Official-Message/database"
 	"implude.kr/VOAH-Official-Message/models"
+	"implude.kr/VOAH-Official-Message/utils/permission"
 	"implude.kr/VOAH-Official-Message/utils/validator"
 )
 
@@ -37,7 +39,14 @@ func UpdateChat(c *fiber.Ctx) error {
 			"message": "Internal server error",
 		})
 	}
-	if chat.AuthorID != c.Locals("user-id").(uuid.UUID) {
+	var requirePerms []permission.Permission = []permission.Permission{
+		{
+			Type:   configs.ChannelObject,
+			Scope:  configs.EditPermissionScope,
+			Target: chat.ChannelID,
+		},
+	}
+	if chat.AuthorID != c.Locals("user-id").(uuid.UUID) && !permission.PermissionCheck(c.Locals("permissions").([]permission.Permission), requirePerms) {
 		return c.Status(403).JSON(fiber.Map{
 			"message": "You are not the author of this chat",
 		})
