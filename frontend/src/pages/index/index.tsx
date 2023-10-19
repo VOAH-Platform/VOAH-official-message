@@ -12,6 +12,7 @@ import { THEME_TOKEN } from '@/constant';
 import { IndexWrapper } from './style';
 
 import './style.scss';
+import { getMessage } from '@/utils/getMessage';
 // import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
@@ -30,6 +31,38 @@ interface MessageData {
     url: string;
   }[];
 }
+
+// {
+//     "chats": [
+//         {
+//             "id": 1,
+//             "Content": "정신나간",
+//             "AuthorID": "1a828fa4-8d76-4170-8f61-927b1b7b3afd",
+//             "ChannelID": "5264cbbc-0f43-4bad-a3a3-3616072fb6c1",
+//             "created-at": "2023-10-19T09:02:02.472836Z",
+//             "updated-at": "2023-10-19T09:02:02.472836Z"
+//         },
+//         {
+//             "id": 2,
+//             "Content": "정신나간",
+//             "AuthorID": "1a828fa4-8d76-4170-8f61-927b1b7b3afd",
+//             "ChannelID": "5264cbbc-0f43-4bad-a3a3-3616072fb6c1",
+//             "created-at": "2023-10-19T09:04:01.597615Z",
+//             "updated-at": "2023-10-19T09:04:01.597615Z"
+//         }
+//     ],
+//     "success": true
+// {
+//             "id": 2,
+//             "Content": "정신나간",
+//             "AuthorID": "1a828fa4-8d76-4170-8f61-927b1b7b3afd",
+//             "ChannelID": "5264cbbc-0f43-4bad-a3a3-3616072fb6c1",
+//             "created-at": "2023-10-19T09:04:01.597615Z",
+//             "updated-at": "2023-10-19T09:04:01.597615Z"
+//         }
+//
+//
+// }
 
 // interface UserData {
 //   userId: string;
@@ -76,13 +109,13 @@ function randomTimestamp() {
 function fetchMessageData(): MessageData {
   return {
     userId: 'user123',
-    priority: 1,
+    priority: 1,//남겨
     message: {
       content: '우리는 성실한 핫산이다!',
       date: randomTimestamp(),
       isEdited: false,
     },
-    attachment: [
+    attachment: [//남겨
       {
         type: 'image',
         url: 'https://example.com',
@@ -203,6 +236,20 @@ export function IndexPage() {
       element.scrollTop = element.scrollHeight;
     }
   };
+
+  getMessage(
+    'https://test-voah-message.zirr.al',
+    {
+      'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
+      count: 50,
+      page: 1,
+    },
+    {
+      Authorization:
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc3MDg5NzIsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.Ss0SdiLaYyROW8izLjPZsUofIgXMiWwuDk_zX2KWzik',
+      'Content-Type': 'application/json',
+    },
+  );
 
   return (
     <IndexWrapper className="container">
