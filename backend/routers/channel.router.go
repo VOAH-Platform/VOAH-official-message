@@ -11,6 +11,10 @@ func addChannel(router *fiber.App) {
 
 	channelGroup.Use(middleware.Authenticate)
 
+	channelGroup.Get("/", func(c *fiber.Ctx) error {
+		return channel.GetChannelList(c)
+	})
+
 	channelGroup.Post("/create", func(c *fiber.Ctx) error {
 		return channel.CreateChannel(c)
 	})
