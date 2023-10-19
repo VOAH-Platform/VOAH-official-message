@@ -187,7 +187,7 @@ export function IndexPage() {
       }
       const n = sample.map((content, index) => (
         <Message
-          key={index}
+          key={Math.random()}
           order={index}
           length={messages.length - 1}
           userId={content.id}
