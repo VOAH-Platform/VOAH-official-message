@@ -1,7 +1,7 @@
 const replacingMap: {
   [key: string]: string[];
 } = {
-  bold: ['**', '<b>', '</b>'],
+  bold: ['**', '<span style="text-shadow:0px 0px 1px black;">', '</span>'],
   italic: ['*', '<i>', '</i>'],
   italic3: ['_', '<i>', '</i>'],
   swung: ['~~', '<s>', '</s>'],
@@ -26,7 +26,12 @@ function replaceStr(
       escapedSubject + '([^' + escapedSubject + ']+)($|\\n)',
       'g',
     );
-    return input.replace(pattern, '<b>' + escapedSubject + '$1</b>$2');
+    return input.replace(
+      pattern,
+      '<span style="text-shadow:0px 0px 1px black;">' +
+        escapedSubject +
+        '$1</span>$2',
+    );
   }
 
   // markdown 문자 두개를 찾아 사이의 문자열을 감싸는 태그를 생성
@@ -65,7 +70,12 @@ export function removeFormattingChars(input: string): string {
     const tagEnd = pattern[2];
 
     if (tagEnd === '') {
-      const regex = new RegExp(subject + '(?=<b>)|(?<=</b>)' + subject, 'g');
+      const regex = new RegExp(
+        subject +
+          '(?=<span style="text-shadow:0px 0px 1px black;">)|(?<=</span>)' +
+          subject,
+        'g',
+      );
       input = input.replace(regex, '');
     } else {
       const regex = new RegExp(
