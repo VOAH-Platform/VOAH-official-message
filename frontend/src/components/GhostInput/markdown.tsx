@@ -1,3 +1,17 @@
+const replacingMap: {
+  [key: string]: string[];
+} = {
+  bold: ['**', '<b>', '</b>'],
+  italic: ['*', '<i>', '</i>'],
+  italic3: ['_', '<i>', '</i>'],
+  swung: ['~~', '<s>', '</s>'],
+  underLine: ['__', '<u>', '</u>'],
+  h3: ['### ', '#', ''],
+  h2: ['## ', '#', ''],
+  h1: ['# ', '#', ''],
+};
+
+/** ~~(문)~~ -> ~~<t1>(문)<t2>~~으로 바꾸는 것처럼. 특정 문자기호에 대하여 감싸진 부분을 태그로 적용하는 함수 */
 function replaceStr(
   input: string,
   subject: string,
@@ -7,16 +21,17 @@ function replaceStr(
   const escapedSubject = subject.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
 
   if (tag2 === '') {
+    // 줄의 마지막까지 포함하여 header markdown을 찾는 패턴을 사용
     const pattern = new RegExp(
-      escapedSubject + '([^' + escapedSubject + ']+)',
+      escapedSubject + '([^' + escapedSubject + ']+)($|\\n)',
       'g',
     );
-    return input.replace(pattern, '<b>' + escapedSubject + '$1</b>');
+    return input.replace(pattern, '<b>' + escapedSubject + '$1</b>$2');
   }
 
+  // markdown 문자 두개를 찾아 사이의 문자열을 감싸는 태그를 생성
   const pattern = new RegExp(escapedSubject + '(.*?)' + escapedSubject, 'g');
   let replacedStr = input.replace(pattern, (_, innerContent) => {
-    //임시로 match를 _로 바꿈
     return subject + tag1 + innerContent + tag2 + subject;
   });
 
@@ -29,19 +44,8 @@ function replaceStr(
   return replacedStr;
 }
 
-export function markdowned(str: string) {
-  const replacingMap: {
-    [key: string]: string[];
-  } = {
-    bold: ['**', '<b>', '</b>'],
-    italic: ['*', '<i>', '</i>'],
-    italic2: ['_', '<i>', '</i>'],
-    swung: ['~~', '<s>', '</s>'],
-    underLine: ['__', '<u>', '</u>'],
-    h3: ['### ', '###', ''],
-    h2: ['## ', '##', ''],
-    h1: ['# ', '#', ''],
-  };
+/** replacingMap 배열을 토대로 replaceStr를 실행하여 문자열을 마크다운형식으로 바꾸는 함수 */
+export function markdown(str: string) {
   for (const i of Object.keys(replacingMap)) {
     str = replaceStr(
       str,
@@ -51,4 +55,25 @@ export function markdowned(str: string) {
     );
   }
   return str;
+}
+
+/** 특수문자를 없에고 태그만 남기는 함수  */
+export function removeFormattingChars(input: string): string {
+  for (const pattern of Object.values(replacingMap)) {
+    const subject = pattern[0].replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
+    const tagStart = pattern[1];
+    const tagEnd = pattern[2];
+
+    if (tagEnd === '') {
+      const regex = new RegExp(subject + '(?=<b>)|(?<=</b>)' + subject, 'g');
+      input = input.replace(regex, '');
+    } else {
+      const regex = new RegExp(
+        subject + '(?=' + tagStart + ')|(?<=' + tagEnd + ')' + subject,
+        'g',
+      );
+      input = input.replace(regex, '');
+    }
+  }
+  return input;
 }

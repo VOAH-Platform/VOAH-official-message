@@ -4,7 +4,7 @@
 import DOMPurify from 'dompurify';
 import { useEffect, useRef, useState } from 'react';
 
-import { markdowned } from './markdown';
+import { markdown, removeFormattingChars } from './markdown';
 
 export function GhostInput({
   onChange,
@@ -12,6 +12,7 @@ export function GhostInput({
   onChange?: (value: unknown) => void;
 }) {
   const [input, setInput] = useState('');
+  const [sendInput, setSendInput] = useState('');
   const [inputHeight, setInputHeight] = useState(0);
   const [inputWidth, setInputWidth] = useState(0);
 
@@ -25,6 +26,18 @@ export function GhostInput({
     };
   useEffect(() => {
     setInputHeight(divRef.current?.offsetHeight!);
+
+    const tempStringArr = [];
+    let tempString = '';
+    for (const s of input.split('\n')) {
+      tempStringArr.push(markdown(s));
+      tempString += markdown(s) + '\n';
+    }
+
+    setSendInput(removeFormattingChars(tempString));
+
+    console.log(sendInput);
+
     // console.log(`offSetHeight:${divRef.current?.offsetHeight!}`);
     setInputWidth(divRef.current?.offsetWidth!);
     onChangeT(divRef.current?.scrollHeight!);
@@ -62,6 +75,7 @@ export function GhostInput({
           fontSize: '1rem',
           letterSpacing: '-0.01rem',
           caretColor: 'black',
+          wordBreak: 'break-all',
         }}
       />
       <div
@@ -73,6 +87,7 @@ export function GhostInput({
           flexDirection: 'column',
           justifyContent: 'flex-end',
           alignItems: 'flex-start',
+          wordBreak: 'break-all',
         }}
         onClick={() => {
           document.getElementById('ghost')?.focus();
@@ -83,6 +98,7 @@ export function GhostInput({
               color: '#9099A6',
               fontSize: '1rem',
               letterSpacing: '-0.01rem',
+              wordBreak: 'break-all',
             }}>
             #공개SW개발자대회 채널에 메세지 보내기
           </span>
@@ -90,13 +106,14 @@ export function GhostInput({
           input.split('\n').map((val, key) => (
             <span
               dangerouslySetInnerHTML={{
-                __html: markdowned(DOMPurify.sanitize(val)),
+                __html: markdown(DOMPurify.sanitize(val)),
               }}
               style={{
                 minHeight: '20px',
                 color: '#42464A',
                 fontSize: '1rem',
                 letterSpacing: '-0.01rem',
+                wordBreak: 'break-all',
               }}
               key={key}></span>
           ))
