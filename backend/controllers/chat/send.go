@@ -3,8 +3,10 @@ package chat
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"implude.kr/VOAH-Official-Message/configs"
 	"implude.kr/VOAH-Official-Message/database"
 	"implude.kr/VOAH-Official-Message/models"
+	"implude.kr/VOAH-Official-Message/utils/permission"
 	"implude.kr/VOAH-Official-Message/utils/validator"
 )
 
@@ -19,6 +21,20 @@ func SendChat(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{
 			"message": "Invalid request",
 			"error":   errArr,
+		})
+	}
+
+	var requirePerms []permission.Permission = []permission.Permission{
+		{
+			Type:   configs.ChannelObject,
+			Scope:  configs.WritePermissionScope,
+			Target: uuid.MustParse(sendRequest.ChannelID),
+		},
+	}
+	userPerms := c.Locals("permissions").([]permission.Permission)
+	if !permission.PermissionCheck(userPerms, requirePerms) {
+		return c.Status(403).JSON(fiber.Map{
+			"message": "You don't have permission to read chat",
 		})
 	}
 

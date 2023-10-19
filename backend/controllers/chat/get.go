@@ -4,8 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"implude.kr/VOAH-Official-Message/configs"
 	"implude.kr/VOAH-Official-Message/database"
 	"implude.kr/VOAH-Official-Message/models"
+	"implude.kr/VOAH-Official-Message/utils/permission"
 	"implude.kr/VOAH-Official-Message/utils/validator"
 )
 
@@ -23,12 +25,26 @@ func GetChatList(c *fiber.Ctx) error {
 			"error":   errArr,
 		})
 	}
+	var requirePerms []permission.Permission = []permission.Permission{
+		{
+			Type:   configs.ChannelObject,
+			Scope:  configs.ReadPermissionScope,
+			Target: uuid.MustParse(getChatListRequest.ChannelID),
+		},
+	}
+	userPerms := c.Locals("permissions").([]permission.Permission)
+	if !permission.PermissionCheck(userPerms, requirePerms) {
+		return c.Status(403).JSON(fiber.Map{
+			"message": "You don't have permission to read chat",
+		})
+	}
+
 	db := database.DB
 
 	var chats []models.Chat
 
 	err := db.Where(&models.Chat{ChannelID: uuid.MustParse(getChatListRequest.ChannelID)}).
-		Order("created_at").Offset(getChatListRequest.Page * getChatListRequest.Count).
+		Order("created_at").Offset((getChatListRequest.Page - 1) * getChatListRequest.Count).
 		Limit(getChatListRequest.Count).
 		Find(&chats).Error
 
