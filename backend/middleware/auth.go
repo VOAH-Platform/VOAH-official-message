@@ -37,7 +37,7 @@ func Authenticate(c *fiber.Ctx) error {
 	resp, err := client.R().
 		SetHeader("API-KEY", configs.Env.Server.CoreAPIKey).
 		SetHeader("Authorization", "Bearer "+rawHeader).
-		Get(configs.Env.Server.CoreInternalHost + "/api/check")
+		Get(configs.Env.Server.CoreInternalHost + "/api/server/user")
 
 	if err != nil {
 		log.Error(err.Error())
