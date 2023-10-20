@@ -2,8 +2,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import DOMPurify from 'dompurify';
+import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 
+import { inputAtom, sendInputAtom } from './inputAtom';
 import { markdown, removeFormattingChars } from './markdown';
 
 export function GhostInput({
@@ -11,8 +13,8 @@ export function GhostInput({
 }: {
   onChange?: (value: unknown) => void;
 }) {
-  const [input, setInput] = useState('');
-  const [sendInput, setSendInput] = useState('');
+  const [input, setInput] = useAtom(inputAtom);
+  const [sendInput, setSendInput] = useAtom(sendInputAtom);
   const [inputHeight, setInputHeight] = useState(0);
   const [inputWidth, setInputWidth] = useState(0);
 
@@ -112,7 +114,7 @@ export function GhostInput({
               }}
               style={{
                 minHeight: '20px',
-                color: '#42464A',
+                color: '$gray600',
                 fontSize: '1rem',
                 letterSpacing: '-0.01rem',
                 wordBreak: 'break-all',

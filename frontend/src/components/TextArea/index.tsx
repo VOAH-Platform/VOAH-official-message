@@ -1,3 +1,4 @@
+import { useAtom } from 'jotai';
 import {
   // Asterisk,
   // Hexagon,
@@ -23,6 +24,7 @@ import {
 import { useRef } from 'react';
 
 import { GhostInput } from '../GhostInput';
+import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
 
 import { Line } from './line';
 import {
@@ -48,10 +50,13 @@ export function TextArea({
   onChange?: (value: unknown) => void;
   [key: string]: unknown;
 }) {
+  const [, setInput] = useAtom(inputAtom);
+  const [sendInput] = useAtom(sendInputAtom);
+
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
     // console.log(`divRef:${divRef.current?.offsetHeight!}`);
-    onChange?.(divRef.current?.offsetHeight!);
+    onChange?.(divRef.current?.offsetHeight);
   };
 
   const divRef = useRef<HTMLDivElement>(null);
@@ -83,7 +88,11 @@ export function TextArea({
             placeholder="#공개SW개발자대회에 메시지 보내기"
           /> */}
         </InputWrapper>
-        <CommitBtn>
+        <CommitBtn
+          onClick={() => {
+            console.log(`on click input : ${sendInput}`);
+            setInput('');
+          }}>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
       </TextForm>
