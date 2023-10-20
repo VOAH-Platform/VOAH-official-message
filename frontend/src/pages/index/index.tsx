@@ -12,9 +12,7 @@ import { THEME_TOKEN } from '@/constant';
 import { IndexWrapper } from './style';
 
 import './style.scss';
-import { getMessage, getMessageBody } from '@/utils/getMessage';
-import { header } from '@/utils/setting';
-import { postMessage, postMessageBody } from '@/utils/postMessage';
+import { fetchData, postData } from '@/utils/index';
 // import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
@@ -301,58 +299,6 @@ export function IndexPage() {
     if (isScrollAtBottom) {
       // window.scrollTo(0, element.scrollHeight);
       element.scrollTop = element.scrollHeight;
-    }
-  };
-
-  const apiKey =
-    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc3NzE3NDAsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.mj4Lf_NcSfBO4XWTAWTLCTlnohT10IYRvr4ssc_Nraw';
-
-  const fetchData = async () => {
-    try {
-      const data = await getMessage(
-        'https://test-voah-message.zirr.al/api/chat',
-        {
-          'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
-          count: 50,
-          page: 1,
-        } as getMessageBody,
-        {
-          Authorization: apiKey,
-          'Content-Type': 'application/json',
-        } as header,
-      );
-
-      for (const i in data.chats) {
-        console.log(
-          `i: ${i} and data.chats[i]: ${data.chats[i]} and data.chats[i]["Content"]: ${data.chats[i]['Content']}`,
-        );
-        console.log(data.chats[i]);
-      }
-      console.log(data);
-      console.log(data.chats);
-      console.log(JSON.stringify(data.chats));
-    } catch (error: any) {
-      console.error('Error fetching data:', error.message || error);
-    }
-  };
-
-  const postData = async () => {
-    try {
-      const data = await postMessage(
-        'https://test-voah-message.zirr.al/api/chat/send',
-        {
-          content: 'test message from browser',
-          'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
-        } as postMessageBody,
-        {
-          Authorization: apiKey,
-          'Content-Type': 'application/json',
-        } as header,
-      );
-
-      console.log(data);
-    } catch (error: any) {
-      console.error('Error fetching data:', error.message || error);
     }
   };
 

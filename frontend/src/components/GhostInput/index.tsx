@@ -11,13 +11,13 @@ export function GhostInput({
 }: {
   onChange?: (value: unknown) => void;
 }) {
+  const divRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
+
   const [input, setInput] = useState('');
   const [sendInput, setSendInput] = useState('');
   const [inputHeight, setInputHeight] = useState(0);
   const [inputWidth, setInputWidth] = useState(0);
-
-  const divRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLTextAreaElement>(null);
 
   const onChangeT =
     onChange ||
