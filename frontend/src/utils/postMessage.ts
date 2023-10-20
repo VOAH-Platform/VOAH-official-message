@@ -1,31 +1,30 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { header } from './setting';
 
-export interface getMessageBody {
+export interface postMessageBody {
+  content: string;
   'channel-id': string;
-  count: number;
-  page: number;
 }
 
-export const getMessage = (
+export const postMessage = (
   url: string,
-  body: getMessageBody,
+  body: postMessageBody,
   header: header,
 ) => {
   const axiosConfig: AxiosRequestConfig = {
     headers: {
       ...header,
     },
-    params: body,
   };
 
   return axios
-    .get(url, axiosConfig)
+    .post(url, body, axiosConfig)
     .then((response) => {
-      // console.log(response.data);
+    //   console.log(response.data);
       return response.data;
     })
     .catch((error) => {
       console.error('Error:', error.message || error);
+      throw error;
     });
 };

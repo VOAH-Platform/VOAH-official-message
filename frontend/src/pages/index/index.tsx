@@ -12,11 +12,9 @@ import { THEME_TOKEN } from '@/constant';
 import { IndexWrapper } from './style';
 
 import './style.scss';
-import {
-  getMessage,
-  getMessageBody,
-  getMessageHeader,
-} from '@/utils/getMessage';
+import { getMessage, getMessageBody } from '@/utils/getMessage';
+import { header } from '@/utils/setting';
+import { postMessage, postMessageBody } from '@/utils/postMessage';
 // import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
@@ -118,15 +116,15 @@ interface CoreData {
 //   };
 // }
 
-function randomTimestamp() {
-  const minTimestamp = Date.parse('2000-01-01T00:00:00Z'); // 시작 타임스탬프 (2000년 1월 1일)
-  const maxTimestamp = Date.now(); // 현재 타임스탬프 (현재 시간)
+// function randomTimestamp() {
+//   const minTimestamp = Date.parse('2000-01-01T00:00:00Z'); // 시작 타임스탬프 (2000년 1월 1일)
+//   const maxTimestamp = Date.now(); // 현재 타임스탬프 (현재 시간)
 
-  const randomMillis =
-    Math.floor(Math.random() * (maxTimestamp - minTimestamp)) + minTimestamp;
+//   const randomMillis =
+//     Math.floor(Math.random() * (maxTimestamp - minTimestamp)) + minTimestamp;
 
-  return randomMillis;
-}
+//   return randomMillis;
+// }
 
 function fetchMessageData(): MessageData {
   return {
@@ -182,12 +180,12 @@ export function IndexPage() {
 
   const calcDate = (tar: string) => {
     const today = new Date(Date.now());
-    console.log(tar);
+    // console.log(tar);
     const textday = new Date(tar);
-    console.log(textday);
+    // console.log(textday);
     let res: string;
-    const wow = new Date(textday);
-    console.log(wow);
+    // const wow = new Date(textday);
+    // console.log(wow);
     if (today.getDate() - textday.getDate() == 0) {
       res = '오늘';
     } else if (today.getDate() - textday.getDate() == 1) {
@@ -222,8 +220,7 @@ export function IndexPage() {
 
   const before_list = (messages: any) => {
     const user_info = fetchCoreData() as CoreData;
-    const a = messages as any[];
-    return a.map((content, index) => (
+    return messages.map((content: any, index: any) => (
       <Message
         key={index}
         order={index}
@@ -232,9 +229,7 @@ export function IndexPage() {
         priority={content.priority}
         messageContent={content.Content}
         messageDate={calcDate(content['created-at'])}
-        isMessageEdited={
-          content['created-at'] == content['updated-at'] ? true : false
-        }
+        isMessageEdited={content['created-at'] === content['updated-at']}
         isMessageAnswering={true}
         AnsweringUserId={'홍길동'}
         AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
@@ -278,7 +273,9 @@ export function IndexPage() {
   });
 
   // let message_list = before_list.reverse();
-  const [message_list, setMessage_list] = useState(before_list.reverse());
+  const [message_list, setMessage_list] = useState(
+    before_list(messages).reverse(),
+  );
   // console.log(message_list);
   // console.log(observe_target + '이거에유');
 
@@ -307,6 +304,9 @@ export function IndexPage() {
     }
   };
 
+  const apiKey =
+    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc3NzE3NDAsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.mj4Lf_NcSfBO4XWTAWTLCTlnohT10IYRvr4ssc_Nraw';
+
   const fetchData = async () => {
     try {
       const data = await getMessage(
@@ -317,10 +317,37 @@ export function IndexPage() {
           page: 1,
         } as getMessageBody,
         {
-          Authorization:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc3MjI3NzYsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.aFJ0VFx5W4FVYgkv-SYOhqprUPGqQK0smrrFZP8Jg2o',
+          Authorization: apiKey,
           'Content-Type': 'application/json',
-        } as getMessageHeader,
+        } as header,
+      );
+
+      for (const i in data.chats) {
+        console.log(
+          `i: ${i} and data.chats[i]: ${data.chats[i]} and data.chats[i]["Content"]: ${data.chats[i]['Content']}`,
+        );
+        console.log(data.chats[i]);
+      }
+      console.log(data);
+      console.log(data.chats);
+      console.log(JSON.stringify(data.chats));
+    } catch (error: any) {
+      console.error('Error fetching data:', error.message || error);
+    }
+  };
+
+  const postData = async () => {
+    try {
+      const data = await postMessage(
+        'https://test-voah-message.zirr.al/api/chat/send',
+        {
+          content: 'test message from browser',
+          'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
+        } as postMessageBody,
+        {
+          Authorization: apiKey,
+          'Content-Type': 'application/json',
+        } as header,
       );
 
       console.log(data);
@@ -331,6 +358,7 @@ export function IndexPage() {
 
   useEffect(() => {
     fetchData();
+    postData();
   }, []);
 
   return (
