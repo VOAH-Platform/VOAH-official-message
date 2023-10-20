@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+import DOMPurify from 'dompurify';
 import { useEffect, useRef, useState } from 'react';
+
+import { markdown, removeFormattingChars } from './markdown';
 
 export function GhostInput({
   onChange,
@@ -9,6 +12,7 @@ export function GhostInput({
   onChange?: (value: unknown) => void;
 }) {
   const [input, setInput] = useState('');
+  const [sendInput, setSendInput] = useState('');
   const [inputHeight, setInputHeight] = useState(0);
   const [inputWidth, setInputWidth] = useState(0);
 
@@ -20,66 +24,22 @@ export function GhostInput({
     function () {
       return;
     };
-
-  function replaceStr(
-    input: string,
-    subject: string,
-    tag1: string,
-    tag2: string,
-  ): string {
-    const escapedSubject = subject.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
-
-    if (tag2 === '') {
-      const pattern = new RegExp(
-        escapedSubject + '([^' + escapedSubject + ']+)',
-        'g',
-      );
-      return input.replace(pattern, '<b>' + escapedSubject + '$1</b>');
-    }
-
-    const pattern = new RegExp(escapedSubject + '(.*?)' + escapedSubject, 'g');
-    let replacedStr = input.replace(pattern, (_, innerContent) => {
-      //임시로 match를 _로 바꿈
-      return subject + tag1 + innerContent + tag2 + subject;
-    });
-
-    // <s></s> 사이에 아무것도 없으면 다시 ~~로 바꿔줌
-    replacedStr = replacedStr.replace(
-      RegExp(escapedSubject + tag1 + tag2 + escapedSubject, 'g'),
-      subject + subject,
-    );
-
-    return replacedStr;
-  }
-
-  function processing(str: string): string {
-    const replacingMap: {
-      [key: string]: string[];
-    } = {
-      bold: ['**', '<b>', '</b>'],
-      italic: ['*', '<i>', '</i>'],
-      italic3: ['_', '<i>', '</i>'],
-      swung: ['~~', '<s>', '</s>'],
-      underLine: ['__', '<u>', '</u>'],
-      h3: ['### ', '###', ''],
-      h2: ['## ', '##', ''],
-      h1: ['# ', '#', ''],
-    };
-    for (const i of Object.keys(replacingMap)) {
-      str = replaceStr(
-        str,
-        replacingMap[i][0],
-        replacingMap[i][1],
-        replacingMap[i][2],
-      );
-    }
-    return str;
-  }
-
   useEffect(() => {
     // console.log(input.split('\n'));
-    // console.log(processing(input.split('\n')[0]));
+    // console.log(processing(input.split('\n')[0]));n
     setInputHeight(divRef.current?.offsetHeight!);
+
+    const tempStringArr = [];
+    let tempString = '';
+    for (const s of input.split('\n')) {
+      tempStringArr.push(markdown(s));
+      tempString += markdown(s) + '\n';
+    }
+
+    setSendInput(removeFormattingChars(tempString));
+
+    console.log(sendInput);
+
     // console.log(`offSetHeight:${divRef.current?.offsetHeight!}`);
     setInputWidth(divRef.current?.offsetWidth!);
     onChangeT(divRef.current?.scrollHeight!);
@@ -117,6 +77,7 @@ export function GhostInput({
           fontSize: '1rem',
           letterSpacing: '-0.01rem',
           caretColor: 'black',
+          wordBreak: 'break-all',
         }}
       />
       <div
@@ -128,6 +89,7 @@ export function GhostInput({
           flexDirection: 'column',
           justifyContent: 'flex-end',
           alignItems: 'flex-start',
+          wordBreak: 'break-all',
         }}
         onClick={() => {
           document.getElementById('ghost')?.focus();
@@ -138,21 +100,25 @@ export function GhostInput({
               color: '#9099A6',
               fontSize: '1rem',
               letterSpacing: '-0.01rem',
+              wordBreak: 'break-all',
             }}>
             #공개SW개발자대회 채널에 메세지 보내기
           </span>
         ) : (
           input.split('\n').map((val, key) => (
             <span
+              dangerouslySetInnerHTML={{
+                __html: markdown(DOMPurify.sanitize(val)),
+              }}
               style={{
                 minHeight: '20px',
                 color: '#42464A',
                 fontSize: '1rem',
                 letterSpacing: '-0.01rem',
+                wordBreak: 'break-all',
+                whiteSpace: 'pre',
               }}
-              key={key}>
-              {val}
-            </span>
+              key={key}></span>
           ))
         )}
       </div>
