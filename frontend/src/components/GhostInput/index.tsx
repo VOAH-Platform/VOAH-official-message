@@ -14,7 +14,7 @@ export function GhostInput({
   onChange?: (value: unknown) => void;
 }) {
   const [input, setInput] = useAtom(inputAtom);
-  const [sendInput, setSendInput] = useAtom(sendInputAtom);
+  const [, setSendInput] = useAtom(sendInputAtom);
   const [inputHeight, setInputHeight] = useState(0);
   const [inputWidth, setInputWidth] = useState(0);
 
@@ -28,7 +28,7 @@ export function GhostInput({
     };
   useEffect(() => {
     // console.log(input.split('\n'));
-    // console.log(processing(input.split('\n')[0]));n
+    // console.log(processing(input.split('\n')[0]));
     setInputHeight(divRef.current?.offsetHeight!);
 
     const tempStringArr = [];
@@ -39,9 +39,6 @@ export function GhostInput({
     }
 
     setSendInput(removeFormattingChars(tempString));
-
-    console.log(sendInput);
-
     // console.log(`offSetHeight:${divRef.current?.offsetHeight!}`);
     setInputWidth(divRef.current?.offsetWidth!);
     onChangeT(divRef.current?.scrollHeight!);
@@ -63,6 +60,13 @@ export function GhostInput({
         onChange={(e) => {
           setInput(e.target.value);
           onChangeT(input);
+        }}
+        onKeyDown={(e) => {
+          //enter만 누르면 줄바꿈 x
+          if (!e.shiftKey && e.key === 'Enter') {
+            e.preventDefault();
+            console.log('preventDefault 실행됨');
+          }
         }}
         style={{
           padding: '0',

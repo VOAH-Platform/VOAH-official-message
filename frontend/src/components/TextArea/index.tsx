@@ -61,12 +61,24 @@ export function TextArea({
 
   const divRef = useRef<HTMLDivElement>(null);
 
+  const inputDelete = () => {
+    console.log(`on click input : ${sendInput}`);
+    setInput('');
+  };
+
+  const inputDeleteKeyPress = (e: KeyboardEvent): void => {
+    if (e.key === 'Enter' && !e.shiftKey) inputDelete();
+  };
+
   // useEffect(() => {
   //   console.log(`divRef22:${divRef.current?.offsetHeight!}`);
   // }, [divRef, divRef.current, divRef.current?.offsetHeight!]);
 
   return (
-    <TextAreaWrapper ref={divRef} {...props}>
+    <TextAreaWrapper
+      ref={divRef}
+      onKeyDown={() => inputDeleteKeyPress}
+      {...props}>
       {/* <div style={{ width: '100vw' }} ref={divRef}> */}
       {showSelectMessageState ? (
         <SelectMessageState>
@@ -88,11 +100,7 @@ export function TextArea({
             placeholder="#공개SW개발자대회에 메시지 보내기"
           /> */}
         </InputWrapper>
-        <CommitBtn
-          onClick={() => {
-            console.log(`on click input : ${sendInput}`);
-            setInput('');
-          }}>
+        <CommitBtn onClick={inputDelete}>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
       </TextForm>
