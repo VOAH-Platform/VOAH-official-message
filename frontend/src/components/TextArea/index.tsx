@@ -61,9 +61,8 @@ export function TextArea({
 
   const divRef = useRef<HTMLDivElement>(null);
 
-  const inputDelete = () => {
+  const inputDelete = (): void => {
     if (sendInput !== '') {
-      console.log(`on click input : ${sendInput}`);
       setInput('');
     }
   };

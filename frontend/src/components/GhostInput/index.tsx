@@ -6,7 +6,7 @@ import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 
 import { inputAtom, sendInputAtom } from './inputAtom';
-import { markdown, removeFormattingChars } from './markdown';
+import { markdown, removeFormattingChars, reverseMarkdown } from './markdown';
 
 export function GhostInput({
   onChange,
@@ -26,6 +26,7 @@ export function GhostInput({
     function () {
       return;
     };
+
   useEffect(() => {
     // console.log(input.split('\n'));
     // console.log(processing(input.split('\n')[0]));
@@ -43,6 +44,16 @@ export function GhostInput({
     setInputWidth(divRef.current?.offsetWidth!);
     onChangeT(divRef.current?.scrollHeight!);
   }, [divRef, divRef.current, input]);
+
+  /** 매시지 수정(메시지 불러오기) 함수 */
+  const importMessage = (message: string): string => {
+    setSendInput('');
+    setInput(reverseMarkdown(message));
+    return reverseMarkdown(message);
+  };
+
+  //importMessage 함수를 사용할 경우 밑의 명령은 지우시오
+  importMessage(input);
 
   return (
     <div

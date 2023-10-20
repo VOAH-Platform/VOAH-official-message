@@ -88,3 +88,34 @@ export function removeFormattingChars(input: string): string {
   }
   return input;
 }
+
+/** markdown, removeFormattingChars를 거친 문자열을 다시 원래 상태로 복구시키는 함수  */
+export function reverseMarkdown(str: string): string {
+  // 헤더 처리
+  const headerPatterns = ['h1', 'h2', 'h3', 'list'];
+  for (const header of headerPatterns) {
+    const [subject, ,] = replacingMap[header];
+    const pattern = new RegExp(
+      '<span style="text-shadow:0px 0px 1px black;">' +
+        subject +
+        '(.*?)</span>',
+      'gm',
+    );
+    str = str.replace(pattern, subject + '$1');
+  }
+
+  for (const i of Object.keys(replacingMap)) {
+    if (headerPatterns.includes(i)) continue; // 이미 처리된 헤더는 건너뛴다
+
+    // 헤더 이외 처리
+    const [subject, tag1, tag2] = replacingMap[i];
+
+    const escapedTag1 = tag1.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
+    const escapedTag2 = tag2.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
+
+    const pattern = new RegExp(escapedTag1 + '(.*?)' + escapedTag2, 'g');
+    str = str.replace(pattern, subject + '$1' + subject);
+  }
+
+  return str;
+}
