@@ -25,6 +25,8 @@ export function GhostInput({
       return;
     };
   useEffect(() => {
+    // console.log(input.split('\n'));
+    // console.log(processing(input.split('\n')[0]));n
     setInputHeight(divRef.current?.offsetHeight!);
 
     const tempStringArr = [];

@@ -6,7 +6,7 @@ export function ProfileImg() {
       aria-hidden="true"
       role="img"
       className="iconify iconify--logos"
-      width="2.75rem"
+      width="44px"
       height="100%"
       preserveAspectRatio="xMidYMid meet"
       viewBox="0 0 256 228">
