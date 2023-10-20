@@ -65,7 +65,6 @@ export function GhostInput({
           //enter만 누르면 줄바꿈 x
           if (!e.shiftKey && e.key === 'Enter') {
             e.preventDefault();
-            console.log('preventDefault 실행됨');
           }
         }}
         style={{

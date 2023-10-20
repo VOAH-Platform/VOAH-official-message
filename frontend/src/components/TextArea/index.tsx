@@ -62,11 +62,15 @@ export function TextArea({
   const divRef = useRef<HTMLDivElement>(null);
 
   const inputDelete = () => {
-    console.log(`on click input : ${sendInput}`);
-    setInput('');
+    if (sendInput !== '') {
+      console.log(`on click input : ${sendInput}`);
+      setInput('');
+    }
   };
 
-  const inputDeleteKeyPress = (e: KeyboardEvent): void => {
+  const inputDeleteKeyPress = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+  ): void => {
     if (e.key === 'Enter' && !e.shiftKey) inputDelete();
   };
 
@@ -77,7 +81,9 @@ export function TextArea({
   return (
     <TextAreaWrapper
       ref={divRef}
-      onKeyDown={() => inputDeleteKeyPress}
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
+        inputDeleteKeyPress(e)
+      }
       {...props}>
       {/* <div style={{ width: '100vw' }} ref={divRef}> */}
       {showSelectMessageState ? (
