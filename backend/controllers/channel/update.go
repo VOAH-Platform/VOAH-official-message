@@ -4,8 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"implude.kr/VOAH-Official-Message/configs"
 	"implude.kr/VOAH-Official-Message/database"
 	"implude.kr/VOAH-Official-Message/models"
+	"implude.kr/VOAH-Official-Message/utils/permission"
 	"implude.kr/VOAH-Official-Message/utils/validator"
 )
 
@@ -27,6 +29,18 @@ func UpdateChannel(c *fiber.Ctx) error {
 	db := database.DB
 	var channel models.Channel
 
+	if !permission.PermissionCheck(c.Locals("permissions").([]permission.Permission), []permission.Permission{
+		{
+			Type:   configs.ChannelObject,
+			Scope:  configs.AdminPermissionScope,
+			Target: uuid.MustParse(updateChannelRequest.ChannelID),
+		},
+	}) {
+		return c.Status(403).JSON(fiber.Map{
+			"message": "You are not the admin of this channel",
+		})
+	}
+
 	err := db.Where(&models.Channel{ID: uuid.MustParse(updateChannelRequest.ChannelID)}).First(&channel).Error
 	if err == gorm.ErrRecordNotFound {
 		return c.Status(404).JSON(fiber.Map{
@@ -37,8 +51,6 @@ func UpdateChannel(c *fiber.Ctx) error {
 			"message": "Internal server error",
 		})
 	}
-
-	// TODO: permission
 
 	channel.Name = updateChannelRequest.Name
 	channel.Description = updateChannelRequest.Description
