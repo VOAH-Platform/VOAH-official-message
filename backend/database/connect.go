@@ -1,8 +1,10 @@
 package database
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"implude.kr/VOAH-Official-Message/configs"
@@ -30,4 +32,32 @@ func ConnectDB() {
 		log.Fatal(err)
 	}
 	log.Info("Connected to database")
+}
+
+func connectRedis(dbName int) (redisClient *redis.Client) {
+	redisConfig := configs.Env.Redis
+	log := logger.Logger
+	ctx := context.Background()
+
+	redisClient = redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", redisConfig.Host, redisConfig.Port),
+		Password: redisConfig.Password,
+		DB:       dbName,
+	})
+	status := redisClient.Ping(ctx)
+
+	if status.Err() != nil {
+		log.Error("Failed to connect to redis" + fmt.Sprintf(" (DB: %d)", dbName))
+		log.Fatal(status.Err())
+	}
+
+	log.Info("Connected to redis" + fmt.Sprintf(" (DB: %d)", dbName))
+	return redisClient
+}
+
+func InitRedis() {
+	redisConfig := configs.Env.Redis
+	Redis = RedisDB{
+		OnWritingRedis: connectRedis(redisConfig.OnWritingDB),
+	}
 }

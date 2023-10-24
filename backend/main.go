@@ -16,6 +16,7 @@ func main() {
 	configs.LoadSetting() // Load settings
 	logger.InitLogger()   // Intitialize logger
 	database.ConnectDB()  // Connect to database
+	database.InitRedis()  // Initialize redis
 
 	serverConf := configs.Env.Server
 	log := logger.Logger
