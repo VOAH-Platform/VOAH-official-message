@@ -2,17 +2,19 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import DOMPurify from 'dompurify';
+import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 
-import { markdown, removeFormattingChars } from './markdown';
+import { inputAtom, sendInputAtom } from './inputAtom';
+import { markdown, removeFormattingChars, reverseMarkdown } from './markdown';
 
 export function GhostInput({
   onChange,
 }: {
   onChange?: (value: unknown) => void;
 }) {
-  const [input, setInput] = useState('');
-  const [sendInput, setSendInput] = useState('');
+  const [input, setInput] = useAtom(inputAtom);
+  const [, setSendInput] = useAtom(sendInputAtom);
   const [inputHeight, setInputHeight] = useState(0);
   const [inputWidth, setInputWidth] = useState(0);
 
@@ -24,7 +26,10 @@ export function GhostInput({
     function () {
       return;
     };
+
   useEffect(() => {
+    // console.log(input.split('\n'));
+    // console.log(processing(input.split('\n')[0]));
     setInputHeight(divRef.current?.offsetHeight!);
 
     const tempStringArr = [];
@@ -35,13 +40,20 @@ export function GhostInput({
     }
 
     setSendInput(removeFormattingChars(tempString));
-
-    console.log(sendInput);
-
     // console.log(`offSetHeight:${divRef.current?.offsetHeight!}`);
     setInputWidth(divRef.current?.offsetWidth!);
     onChangeT(divRef.current?.scrollHeight!);
   }, [divRef, divRef.current, input]);
+
+  /** 매시지 수정(메시지 불러오기) 함수 */
+  const importMessage = (message: string): string => {
+    setSendInput('');
+    setInput(reverseMarkdown(message));
+    return reverseMarkdown(message);
+  };
+
+  //importMessage 함수를 사용할 경우 밑의 명령은 지우시오
+  importMessage(input);
 
   return (
     <div
@@ -59,6 +71,12 @@ export function GhostInput({
         onChange={(e) => {
           setInput(e.target.value);
           onChangeT(input);
+        }}
+        onKeyDown={(e) => {
+          //enter만 누르면 줄바꿈 x
+          if (!e.shiftKey && e.key === 'Enter') {
+            e.preventDefault();
+          }
         }}
         style={{
           padding: '0',
@@ -110,10 +128,11 @@ export function GhostInput({
               }}
               style={{
                 minHeight: '20px',
-                color: '#42464A',
+                color: '$gray600',
                 fontSize: '1rem',
                 letterSpacing: '-0.01rem',
                 wordBreak: 'break-all',
+                whiteSpace: 'pre',
               }}
               key={key}></span>
           ))

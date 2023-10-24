@@ -13,6 +13,7 @@ import (
 type Message struct {
 	Content   string `json:"content" validate:"required"`
 	ChannelID string `json:"channel-id" validate:"required,uuid4"`
+	Priority  int    `json:"priority" validate:"required,gte=1,lte=3"`
 }
 
 func SendChat(c *fiber.Ctx) error {
@@ -43,6 +44,7 @@ func SendChat(c *fiber.Ctx) error {
 		Content:   sendRequest.Content,
 		AuthorID:  c.Locals("user-id").(uuid.UUID),
 		ChannelID: uuid.MustParse(sendRequest.ChannelID),
+		Priority:  sendRequest.Priority,
 	}
 
 	if err := db.Create(&chat).Error; err != nil {

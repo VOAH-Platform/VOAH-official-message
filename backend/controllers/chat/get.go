@@ -15,7 +15,7 @@ import (
 
 type GetChatListRequest struct {
 	ChannelID string `validate:"required,uuid4"`
-	Count     int    `validate:"required,gt=0"`
+	Count     int    `validate:"required,gt=0,lte=50"`
 	Page      int    `validate:"required,gt=0"`
 }
 

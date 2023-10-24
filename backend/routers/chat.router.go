@@ -25,6 +25,6 @@ func addChat(router *fiber.App) {
 	chatGroup.Delete("/delete", func(c *fiber.Ctx) error {
 		return chat.DeleteChat(c)
 	})
-
-	chatGroup.Get("/ws/:channel", websocket.New(wshandler.ChatWebsocket()))
+	chatWSGroup := router.Group("/api/ws/chat") // chat websocket router group
+	chatWSGroup.Get("/:channel", websocket.New(wshandler.ChatWebsocket()))
 }

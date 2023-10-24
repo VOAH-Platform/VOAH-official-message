@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
@@ -20,7 +21,6 @@ type CheckTokenResponse struct {
 }
 
 func Authenticate(c *fiber.Ctx) error {
-	log := logger.Logger
 	rawHeader := c.Get("Authorization", "")
 	if rawHeader == "" {
 		return c.Status(400).JSON(fiber.Map{
@@ -33,49 +33,49 @@ func Authenticate(c *fiber.Ctx) error {
 		})
 	}
 	rawHeader = strings.Replace(rawHeader, "Bearer ", "", 1)
+
+	var claim CheckTokenResponse
+	code, err := CheckAccessToCore(rawHeader, &claim)
+	if err != nil {
+		return c.Status(code).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	if !claim.Success || claim.UserID == "" {
+		return c.Status(401).JSON(fiber.Map{
+			"message": "Unauthorized",
+		})
+	}
+	c.Locals("user-id", uuid.MustParse(claim.UserID)) // pass user id to next middleware
+	c.Locals("permissions", claim.Perms)              // pass permission to next middleware
+	return c.Next()
+}
+
+func CheckAccessToCore(token string, claim *CheckTokenResponse) (int, error) {
+	log := logger.Logger
 	client := resty.New()
 	resp, err := client.R().
 		SetHeader("API-KEY", configs.Env.Server.CoreAPIKey).
-		SetHeader("Authorization", "Bearer "+rawHeader).
+		SetHeader("Authorization", "Bearer "+token).
 		Get(configs.Env.Server.CoreInternalHost + "/api/server/user")
 
 	if err != nil {
 		log.Error(err.Error())
-		return c.Status(500).JSON(fiber.Map{
-			"message": "Internal Server Error",
-		})
+		return 500, errors.New("internal server error")
 	} else if resp.StatusCode() == 401 {
-		return c.Status(401).JSON(fiber.Map{
-			"message": "Unauthorized",
-		})
+		return 401, errors.New("Unauthorized")
 	} else if resp.StatusCode() == 403 {
-		return c.Status(500).JSON(fiber.Map{
-			"message": "API-KEY is not valid",
-		})
+		return 500, errors.New("API Key is invalid")
 	} else if resp.StatusCode() != 200 {
-		return c.Status(500).JSON(fiber.Map{
-			"message": "Internal Server Error",
-		})
+		return 500, errors.New("internal server error")
 	}
-
-	respObject := &CheckTokenResponse{}
-	if err := json.Unmarshal(resp.Body(), respObject); err != nil {
+	if err := json.Unmarshal(resp.Body(), claim); err != nil {
 		log.Error(err.Error())
-		return c.Status(500).JSON(fiber.Map{
-			"message": "Internal Server Error",
-		})
+		return 500, errors.New("internal server error")
 	}
-	if errArr := validator.VOAHValidator.Validate(respObject); len(errArr) > 0 {
-		return c.Status(500).JSON(fiber.Map{
-			"message": "Internal Server Error",
-		})
+	if errArr := validator.VOAHValidator.Validate(claim); len(errArr) > 0 {
+		return 500, errors.New("internal server error")
 	}
-	if !respObject.Success || respObject.UserID == "" {
-		return c.Status(401).JSON(fiber.Map{
-			"message": "Unauthorized",
-		})
-	}
-	c.Locals("user-id", uuid.MustParse(respObject.UserID)) // pass user id to next middleware
-	c.Locals("permissions", respObject.Perms)              // pass permission to next middleware
-	return c.Next()
+	return 0, nil
 }

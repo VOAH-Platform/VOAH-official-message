@@ -12,6 +12,13 @@ type serverEnv struct {
 	CoreAPIKey       string
 }
 
+type redisEnv struct {
+	Host        string // Redis host
+	Port        int    // Redis port
+	Password    string // Redis password
+	OnWritingDB int    // Redis DB for store OnWriting
+}
+
 type databaseEnv struct {
 	Host     string // Database host
 	Port     int    // Database port
@@ -22,5 +29,6 @@ type databaseEnv struct {
 
 type MainEnv struct {
 	Database databaseEnv
+	Redis    redisEnv
 	Server   serverEnv
 }
