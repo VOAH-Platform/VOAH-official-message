@@ -4,6 +4,7 @@ import { header } from './setting';
 export interface postMessageBody {
   content: string;
   'channel-id': string;
+  priority: number;
 }
 
 export const postMessage = (

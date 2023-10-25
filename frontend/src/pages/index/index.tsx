@@ -21,8 +21,8 @@ import './style.scss';
 // TODO: 위치 바꿔야함
 export interface MessageData {
   id: number;
-  priority: number; // 0: default, 1: important, 2: emergency
   Content: string;
+  Priority: number; // 0: default, 1: important, 2: emergency
   AuthorID: string;
   ChannelID: string;
   'created-at': string;
@@ -253,7 +253,7 @@ export function IndexPage() {
           order={index}
           length={messages.length - 1}
           userId={user_info.user.displayname}
-          priority={content.priority}
+          priority={content.Priority}
           messageContent={content.Content}
           messageDate={calcDate(content['created-at'])}
           isMessageEdited={true}
@@ -331,7 +331,7 @@ export function IndexPage() {
           order={index}
           length={messages.length - 1}
           userId={user_info.user.displayname}
-          priority={content.priority}
+          priority={content.Priority}
           messageContent={content.Content}
           messageDate={calcDate(content['created-at'])}
           isMessageEdited={true}
