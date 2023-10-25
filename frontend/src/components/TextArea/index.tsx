@@ -38,6 +38,7 @@ import {
   StateBox,
   InputWrapper,
 } from './style';
+import { postData } from '@/utils/index';
 
 export function TextArea({
   writingUser,
@@ -47,10 +48,10 @@ export function TextArea({
 }: {
   writingUser: Array<string>;
   showSelectMessageState: boolean;
-  onChange?: (value: unknown) => void;
+  onChange?: (event: number | undefined) => void;
   [key: string]: unknown;
 }) {
-  const [, setInput] = useAtom(inputAtom);
+  const [input, setInput] = useAtom(inputAtom);
   const [sendInput] = useAtom(sendInputAtom);
 
   const handleGhostInputHeightChange = () => {
@@ -61,16 +62,17 @@ export function TextArea({
 
   const divRef = useRef<HTMLDivElement>(null);
 
-  const inputDelete = (): void => {
+  const inputDelete = async (): Promise<void> => {
     if (sendInput !== '') {
+      await postData(input);
       setInput('');
     }
   };
 
-  const inputDeleteKeyPress = (
+  const inputDeleteKeyPress = async (
     e: React.KeyboardEvent<HTMLDivElement>,
-  ): void => {
-    if (e.key === 'Enter' && !e.shiftKey) inputDelete();
+  ): Promise<void> => {
+    if (e.key === 'Enter' && !e.shiftKey) await inputDelete();
   };
 
   // useEffect(() => {

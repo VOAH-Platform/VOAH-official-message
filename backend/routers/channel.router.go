@@ -18,4 +18,12 @@ func addChannel(router *fiber.App) {
 	channelGroup.Post("/create", func(c *fiber.Ctx) error {
 		return channel.CreateChannel(c)
 	})
+
+	channelGroup.Post("/update", func(c *fiber.Ctx) error {
+		return channel.UpdateChannel(c)
+	})
+
+	channelGroup.Delete("/delete", func(c *fiber.Ctx) error {
+		return channel.DeleteChannel(c)
+	})
 }
