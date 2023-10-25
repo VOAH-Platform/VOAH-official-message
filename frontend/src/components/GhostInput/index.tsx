@@ -31,7 +31,10 @@ export function GhostInput({
     };
 
   useEffect(() => {
-    // if (input.length > 500) return;
+    if (input.length > 500) {
+      setInput(input.substring(0, 500));
+      return;
+    }
 
     // console.log(input.split('\n'));
     // console.log(processing(input.split('\n')[0]));
