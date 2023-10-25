@@ -26,3 +26,7 @@ dist-ssr
 # backend
 backend/tmp
 backend/data
+
+# environment
+.env
+run.sh
