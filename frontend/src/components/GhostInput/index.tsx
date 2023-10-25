@@ -6,7 +6,10 @@ import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 
 import { inputAtom, sendInputAtom } from './inputAtom';
-import { markdown, removeFormattingChars, reverseMarkdown } from './markdown';
+import {
+  markdown,
+  removeFormattingChars /** reverseMarkdown, */,
+} from './markdown';
 
 export function GhostInput({
   onChange,
@@ -28,6 +31,8 @@ export function GhostInput({
     };
 
   useEffect(() => {
+    // if (input.length > 500) return;
+
     // console.log(input.split('\n'));
     // console.log(processing(input.split('\n')[0]));
     setInputHeight(divRef.current?.offsetHeight!);
@@ -45,14 +50,12 @@ export function GhostInput({
   }, [divRef, divRef.current, input]);
 
   /** 매시지 수정(메시지 불러오기) 함수 */
-  const importMessage = (message: string): string => {
-    setSendInput('');
-    setInput(reverseMarkdown(message));
-    return reverseMarkdown(message);
-  };
-
-  //importMessage 함수를 사용할 경우 밑의 명령은 지우시오
-  importMessage(input);
+  // **************** importMessage 함수를 사용할 경우 밑의 명령은 지우시오 ******************
+  // const importMessage = (message: string): string => {
+  //   setSendInput('');
+  //   setInput(reverseMarkdown(message));
+  //   return reverseMarkdown(message);
+  // };
 
   return (
     <div
@@ -131,7 +134,7 @@ export function GhostInput({
                 fontSize: '1rem',
                 letterSpacing: '-0.01rem',
                 wordBreak: 'break-all',
-                whiteSpace: 'pre',
+                whiteSpace: 'pre-wrap',
               }}
               key={key}></span>
           ))
