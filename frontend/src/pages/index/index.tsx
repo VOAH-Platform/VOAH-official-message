@@ -1,6 +1,7 @@
 // import { format } from 'date-fns';
 import { useAtom } from 'jotai';
 import { useState, useEffect, useRef } from 'react';
+
 // import { useInView } from 'react-intersection-observer';
 import { themeAtom } from '@/atom';
 import { ExampleButton } from '@/components/ExampleButton';
@@ -15,6 +16,8 @@ import './style.scss';
 import { getMessage, getMessageBody } from '@/utils/getMessage';
 import { header } from '@/utils/setting';
 import { postMessage, postMessageBody } from '@/utils/postMessage';
+
+
 // import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
@@ -165,6 +168,8 @@ function fetchCoreData(): CoreData {
   };
 }
 
+
+
 export function IndexPage() {
   const [, setTheme] = useAtom(themeAtom);
   const messages = [];
@@ -279,6 +284,7 @@ export function IndexPage() {
   // console.log(message_list);
   // console.log(observe_target + '이거에유');
 
+
   const divRef = useRef<HTMLDivElement>(null);
 
   const element = document.documentElement;
@@ -360,6 +366,22 @@ export function IndexPage() {
     fetchData();
     postData();
   }, []);
+
+  const messageBoxRef = useRef<HTMLUListElement>();
+ //const [,setMessages] = useState();
+
+ const scrollToBottom = () => {
+  if (messageBoxRef.current) {
+    messageBoxRef.current.scrollTop = messageBoxRef.current.scrollHeight;
+  }
+ };
+
+ useEffect(() => {
+  scrollToBottom();
+ }, [messages]);
+
+// <div ref={messageBoxRef}>{renderChat()}</div>;
+
 
   return (
     <IndexWrapper className="container">
