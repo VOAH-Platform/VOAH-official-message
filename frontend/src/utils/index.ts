@@ -1,10 +1,10 @@
-import { getMessage, getMessageBody } from '@/utils/getMessage';
-import { header } from '@/utils/setting';
-import { postMessage, postMessageBody } from '@/utils/postMessage';
 import { MessageData } from '@/pages/index';
+import { getMessage, getMessageBody } from '@/utils/getMessage';
+import { postMessage, postMessageBody } from '@/utils/postMessage';
+import { header } from '@/utils/setting';
 
 const apiKey =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc5ODQ1NDUsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.tMVtCyaL53UZ-LLfoeVHF7GvC_xxzWrWm7SRnSMDbEM';
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTgyMzY0NTcsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.QmwLk4Q8bgpMZDZS5CSNp9bpDd4vDUGl0DmSCgbgbY0';
 
 let messageCount = 0;
 let pageCount = 1;
@@ -72,7 +72,7 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
   return [];
 };
 
-export const postData = async (message:string) => {
+export const postData = async (message: string) => {
   try {
     const data = await postMessage(
       'https://test-voah-message.zirr.al/api/chat/send',

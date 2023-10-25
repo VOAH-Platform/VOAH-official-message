@@ -9,7 +9,7 @@ import { markdown, removeFormattingChars } from './markdown';
 export function GhostInput({
   onChange,
 }: {
-  onChange?: (value: unknown) => void;
+  onChange?: (value: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }) {
   const divRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -42,7 +42,6 @@ export function GhostInput({
 
     // console.log(`offSetHeight:${divRef.current?.offsetHeight!}`);
     setInputWidth(divRef.current?.offsetWidth!);
-    onChangeT(divRef.current?.scrollHeight!);
   }, [divRef, divRef.current, input]);
 
   return (
@@ -60,7 +59,7 @@ export function GhostInput({
         value={input}
         onChange={(e) => {
           setInput(e.target.value);
-          onChangeT(input);
+          onChangeT(e);
         }}
         style={{
           padding: '0',

@@ -45,13 +45,15 @@ export function TextArea({
 }: {
   writingUser: Array<string>;
   showSelectMessageState: boolean;
-  onChange?: (value: unknown) => void;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   [key: string]: unknown;
 }) {
-  const handleGhostInputHeightChange = () => {
+  const handleGhostInputHeightChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     // console.log('GhostInput height changed:', height);
     // console.log(`divRef:${divRef.current?.offsetHeight!}`);
-    onChange?.(divRef.current?.offsetHeight!);
+    if (onChange) onChange(event);
   };
 
   const divRef = useRef<HTMLDivElement>(null);

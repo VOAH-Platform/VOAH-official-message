@@ -1,6 +1,7 @@
 // import { format } from 'date-fns';
 import { useAtom } from 'jotai';
 import { useState, useEffect, useRef } from 'react';
+
 // import { useInView } from 'react-intersection-observer';
 import { themeAtom } from '@/atom';
 import { ExampleButton } from '@/components/ExampleButton';
@@ -8,11 +9,11 @@ import { ExampleButton } from '@/components/ExampleButton';
 import { Message } from '@/components/Message';
 import { TextArea } from '@/components/TextArea';
 import { THEME_TOKEN } from '@/constant';
+import { fetchData } from '@/utils/index';
 
 import { IndexWrapper } from './style';
 
 import './style.scss';
-import { fetchData, postData } from '@/utils/index';
 // import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
@@ -179,14 +180,14 @@ const calcDate = (tar: string) => {
     res = textday.getMonth() + '월 ' + textday.getDate() + '일';
   }
   if (textday.getHours() > 12) {
-    let hour = textday.getHours() - 12;
+    const hour = textday.getHours() - 12;
     if (hour < 10) {
       res += ' 오후 0' + hour + ':';
     } else {
       res += ' 오후 ' + hour + ':';
     }
   } else {
-    let hour = textday.getHours();
+    const hour = textday.getHours();
     if (hour < 10) {
       res += ' 오전 0' + hour + ':';
     } else {
@@ -194,21 +195,21 @@ const calcDate = (tar: string) => {
     }
   }
   if (textday.getMinutes() > 10) {
-    let hour = textday.getMinutes();
+    const hour = textday.getMinutes();
     res += hour;
   } else {
-    let hour = textday.getMinutes();
+    const hour = textday.getMinutes();
     res += '0' + hour;
   }
   return res;
 };
 
-export async function IndexPage() {
+export function IndexPage() {
   const [, setTheme] = useAtom(themeAtom);
   let messages: MessageData[] = [];
   let observe_target: Element;
   let loaded = false;
-  let first = false;
+  const first = false;
   // for (let i = 0; i <= 1; i++) {
   //   messages.push(fetchMessageData());
   // }
@@ -229,12 +230,13 @@ export async function IndexPage() {
   //   intersectionObserver.observe(observe_target);
   // });
 
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const intersectionObserver = new IntersectionObserver(async (entries) => {
     // console.log(entries[0].intersectionRatio);
     if (entries[0].intersectionRatio > 0) {
       intersectionObserver.disconnect();
       // console.log(entries[0].intersectionRatio);
-      const sample = (await fetchData()) as MessageData[];
+      const sample = await fetchData();
       if (sample.length === 0) {
         loaded = true;
         return;
@@ -244,7 +246,7 @@ export async function IndexPage() {
       // for (let i = 0; i < 2; i++) {
       //   sample.push(fetchMessageData());
       // }
-      const user_info = fetchCoreData() as CoreData;
+      const user_info = fetchCoreData();
       const n = sample.map((content, index) => (
         <Message
           key={Math.random()}
@@ -278,10 +280,12 @@ export async function IndexPage() {
 
   const element = document.documentElement;
 
-  const handleTextAreaHeightChange = (height: unknown) => {
+  const handleTextAreaHeightChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     const isScrollAtBottom =
       element.scrollHeight - element.scrollTop >= element.clientHeight;
-    const newMargin = height + 'px';
+    const newMargin = `${event.currentTarget.offsetHeight}px`;
 
     // console.log(
     //   element.scrollHeight,
@@ -304,48 +308,46 @@ export async function IndexPage() {
   // }, []);
 
   const before_list = async () => {
-    const user_info = fetchCoreData() as CoreData;
+    const user_info = fetchCoreData();
 
     console.log('test');
 
-    const sample = (await fetchData()) as MessageData[];
+    const sample = await fetchData();
     if (sample.length === 0) {
       loaded = true;
       return;
-    }else{
-      console.log("니가 뭘할 수 잇는데")
+    } else {
+      console.log('니가 뭘할 수 잇는데');
     }
-
-    const test = sample as Array<Object>;
-
-    console.log(test)
 
     messages = sample;
 
-    first = true;
-    console.log(typeof(Array<Object>))
-    console.log(typeof(test));
-
-    setMessage_list(messages.map((content, index) => (
-      <Message
-        key={Math.random()}
-        order={index}
-        length={messages.length - 1}
-        userId={user_info.user.displayname}
-        priority={content.priority}
-        messageContent={content.Content}
-        messageDate={calcDate(content['created-at'])}
-        isMessageEdited={true}
-        isMessageAnswering={true}
-        AnsweringUserId={'홍길동'}
-        AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
-        attachmentType={content.attachment[0].type}
-        attachmentUrl={content.attachment[0].url}
-      />
-    )) as JSX.Element[]);
+    setMessage_list(
+      messages.map((content, index) => (
+        <Message
+          key={Math.random()}
+          order={index}
+          length={messages.length - 1}
+          userId={user_info.user.displayname}
+          priority={content.priority}
+          messageContent={content.Content}
+          messageDate={calcDate(content['created-at'])}
+          isMessageEdited={true}
+          isMessageAnswering={true}
+          AnsweringUserId={'홍길동'}
+          AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
+          attachmentType={content.attachment[0].type}
+          attachmentUrl={content.attachment[0].url}
+        />
+      )) as JSX.Element[],
+    );
   };
 
-  before_list() 
+  useEffect(() => {
+    before_list()
+      .then((val) => console.log(val))
+      .catch((err) => console.log(err));
+  });
 
   return (
     <IndexWrapper className="container">
