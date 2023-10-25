@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"implude.kr/VOAH-Official-Message/configs"
 	"implude.kr/VOAH-Official-Message/database"
 	"implude.kr/VOAH-Official-Message/models"
@@ -65,7 +66,7 @@ func GetChatList(c *fiber.Ctx) error {
 	var chats []models.Chat
 
 	err = db.Where(&models.Chat{ChannelID: uuid.MustParse(getChatListRequest.ChannelID)}).
-		Order("created_at").Offset((getChatListRequest.Page - 1) * getChatListRequest.Count).
+		Order(clause.OrderByColumn{Column: clause.Column{Name: "created_at"}, Desc: true}).Offset((getChatListRequest.Page - 1) * getChatListRequest.Count).
 		Limit(getChatListRequest.Count).
 		Find(&chats).Error
 
