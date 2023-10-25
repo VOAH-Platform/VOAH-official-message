@@ -14,7 +14,7 @@
 // };
 
 export const getMessageStateClassName = (priority: number): string => {
-  console.log(priority);
+  // console.log(priority);
   switch (priority) {
     case 1:
       return 'deafult';
