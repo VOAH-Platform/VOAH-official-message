@@ -79,7 +79,7 @@ export const postData = async (message: string) => {
       {
         content: message,
         'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
-        'priority': 1,
+        priority: 1,
       } as postMessageBody,
       {
         Authorization: apiKey,
