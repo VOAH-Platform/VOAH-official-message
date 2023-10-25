@@ -4,7 +4,7 @@ import { postMessage, postMessageBody } from '@/utils/postMessage';
 import { MessageData } from '@/pages/index';
 
 const apiKey =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc5NjIwMDQsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.s9jlVc5df28ulrWnblrvBhw6AvrkZILeCUW6M9ZoLzY';
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTc5ODQ1NDUsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.tMVtCyaL53UZ-LLfoeVHF7GvC_xxzWrWm7SRnSMDbEM';
 
 let messageCount = 0;
 let pageCount = 1;
@@ -72,12 +72,12 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
   return [];
 };
 
-export const postData = async () => {
+export const postData = async (message:string) => {
   try {
     const data = await postMessage(
       'https://test-voah-message.zirr.al/api/chat/send',
       {
-        content: 'test message from browser',
+        content: message,
         'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
       } as postMessageBody,
       {

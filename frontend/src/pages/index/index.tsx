@@ -229,41 +229,6 @@ export async function IndexPage() {
   //   intersectionObserver.observe(observe_target);
   // });
 
-  const before_list = async () => {
-    const user_info = fetchCoreData() as CoreData;
-
-    console.log('test');
-
-    const sample = (await fetchData()) as MessageData[];
-    if (sample.length === 0) {
-      loaded = true;
-      return;
-    }
-
-    messages = sample;
-
-    first = true;
-    console.log(typeof sample);
-
-    return sample.map((content, index) => (
-      <Message
-        key={Math.random()}
-        order={index}
-        length={messages.length - 1}
-        userId={user_info.user.displayname}
-        priority={content.priority}
-        messageContent={content.Content}
-        messageDate={calcDate(content['created-at'])}
-        isMessageEdited={true}
-        isMessageAnswering={true}
-        AnsweringUserId={'홍길동'}
-        AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
-        attachmentType={content.attachment[0].type}
-        attachmentUrl={content.attachment[0].url}
-      />
-    )) as JSX.Element[];
-  };
-
   const intersectionObserver = new IntersectionObserver(async (entries) => {
     // console.log(entries[0].intersectionRatio);
     if (entries[0].intersectionRatio > 0) {
@@ -337,6 +302,50 @@ export async function IndexPage() {
   // useEffect(() => {
   //   fetchData();
   // }, []);
+
+  const before_list = async () => {
+    const user_info = fetchCoreData() as CoreData;
+
+    console.log('test');
+
+    const sample = (await fetchData()) as MessageData[];
+    if (sample.length === 0) {
+      loaded = true;
+      return;
+    }else{
+      console.log("니가 뭘할 수 잇는데")
+    }
+
+    const test = sample as Array<Object>;
+
+    console.log(test)
+
+    messages = sample;
+
+    first = true;
+    console.log(typeof(Array<Object>))
+    console.log(typeof(test));
+
+    setMessage_list(messages.map((content, index) => (
+      <Message
+        key={Math.random()}
+        order={index}
+        length={messages.length - 1}
+        userId={user_info.user.displayname}
+        priority={content.priority}
+        messageContent={content.Content}
+        messageDate={calcDate(content['created-at'])}
+        isMessageEdited={true}
+        isMessageAnswering={true}
+        AnsweringUserId={'홍길동'}
+        AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
+        attachmentType={content.attachment[0].type}
+        attachmentUrl={content.attachment[0].url}
+      />
+    )) as JSX.Element[]);
+  };
+
+  before_list() 
 
   return (
     <IndexWrapper className="container">
