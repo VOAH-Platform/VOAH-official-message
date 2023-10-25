@@ -1,3 +1,4 @@
+import { useAtom } from 'jotai';
 import {
   // Asterisk,
   // Hexagon,
@@ -23,6 +24,7 @@ import {
 import { useRef } from 'react';
 
 import { GhostInput } from '../GhostInput';
+import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
 
 import { Line } from './line';
 import {
@@ -48,22 +50,40 @@ export function TextArea({
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   [key: string]: unknown;
 }) {
-  const handleGhostInputHeightChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
+  const [, setInput] = useAtom(inputAtom);
+  const [sendInput] = useAtom(sendInputAtom);
+
+  const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
     // console.log(`divRef:${divRef.current?.offsetHeight!}`);
-    if (onChange) onChange(event);
+    onChange?.(divRef.current?.offsetHeight);
   };
 
   const divRef = useRef<HTMLDivElement>(null);
+
+  const inputDelete = (): void => {
+    if (sendInput !== '') {
+      setInput('');
+    }
+  };
+
+  const inputDeleteKeyPress = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+  ): void => {
+    if (e.key === 'Enter' && !e.shiftKey) inputDelete();
+  };
 
   // useEffect(() => {
   //   console.log(`divRef22:${divRef.current?.offsetHeight!}`);
   // }, [divRef, divRef.current, divRef.current?.offsetHeight!]);
 
   return (
-    <TextAreaWrapper ref={divRef} {...props}>
+    <TextAreaWrapper
+      ref={divRef}
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) =>
+        inputDeleteKeyPress(e)
+      }
+      {...props}>
       {/* <div style={{ width: '100vw' }} ref={divRef}> */}
       {showSelectMessageState ? (
         <SelectMessageState>
@@ -85,7 +105,7 @@ export function TextArea({
             placeholder="#공개SW개발자대회에 메시지 보내기"
           /> */}
         </InputWrapper>
-        <CommitBtn>
+        <CommitBtn onClick={inputDelete}>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
       </TextForm>

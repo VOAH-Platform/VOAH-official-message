@@ -1,0 +1,35 @@
+.DS_Store
+
+.env
+run.sh
+
+# backend
+backend/data/setting.json
+backend/data/setting.example.json
+backend/data/user-profiles
+backend/data/api.key
+backend/data/company.webp
+backend/tmp
+
+# Logs
+frontend/logs
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+frontend/*.local
+
+frontend/# Editor directories and files
+frontend/.idea
+frontend/.DS_Store
+frontend/*.suo
+frontend/*.ntvs*
+frontend/*.njsproj
+frontend/*.sln
+frontend/*.sw?

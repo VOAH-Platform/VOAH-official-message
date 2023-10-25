@@ -33,6 +33,12 @@ func LoadEnv() {
 			Password: getEnvStr("DB_PASSWORD", "postgres"),
 			DBName:   getEnvStr("DB_NAME", "voah-message-db"),
 		},
+		Redis: redisEnv{
+			Host:        getEnvStr("REDIS_HOST", "localhost"),
+			Port:        getEnvInt("REDIS_PORT", 6379),
+			Password:    getEnvStr("REDIS_PASSWORD", "redis"),
+			OnWritingDB: getEnvInt("REDIS_ON_WRITING_DB", 5),
+		},
 		Server: serverEnv{
 			HostURL:          getEnvStr("SERVER_HOST_URL", "http://localhost:3001"),
 			InternalHost:     getEnvStr("SERVER_INTERNAL_HOST", "http://localhost:3001"),
