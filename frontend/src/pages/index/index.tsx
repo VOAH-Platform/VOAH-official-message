@@ -242,7 +242,7 @@ export function IndexPage() {
         return;
       }
 
-      console.log('test');
+      console.log('dkagt');
       // for (let i = 0; i < 2; i++) {
       //   sample.push(fetchMessageData());
       // }

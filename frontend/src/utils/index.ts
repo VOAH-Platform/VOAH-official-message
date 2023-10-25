@@ -39,8 +39,8 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
       console.log(data.chats[i]);
       objects.push({
         id: data.chats[i]['id'],
-        priority: 1,
         Content: data.chats[i]['Content'],
+        Priority: data.chats[i]['Priority'],
         AuthorID: data.chats[i]['AuthorID'],
         ChannelID: data.chats[i]['ChannelID'],
         'created-at': data.chats[i]['created-at'],
@@ -79,6 +79,7 @@ export const postData = async (message: string) => {
       {
         content: message,
         'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
+        priority: 1,
       } as postMessageBody,
       {
         Authorization: apiKey,
