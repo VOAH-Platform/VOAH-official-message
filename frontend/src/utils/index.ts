@@ -4,7 +4,7 @@ import { postMessage, postMessageBody } from '@/utils/postMessage';
 import { header } from '@/utils/setting';
 
 const apiKey =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTgyNDA1NTUsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ._mGc_fMQlef0S0aN3RgU7pEGvkDxhp7FIQU4YordM4E';
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTgyNDQzNTAsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.L6uHInMk2_cFyjD3e8oO5aWQ3qCrrF7jUfFMHx6IFek';
 
 let messageCount = 0;
 let pageCount = 1;
@@ -39,8 +39,8 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
       console.log(data.chats[i]);
       objects.push({
         id: data.chats[i]['id'],
-        priority: 1,
         Content: data.chats[i]['Content'],
+        Priority: data.chats[i]['Priority'],
         AuthorID: data.chats[i]['AuthorID'],
         ChannelID: data.chats[i]['ChannelID'],
         'created-at': data.chats[i]['created-at'],
@@ -79,6 +79,7 @@ export const postData = async (message: string) => {
       {
         content: message,
         'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
+        priority: 1,
       } as postMessageBody,
       {
         Authorization: apiKey,

@@ -13,13 +13,14 @@
 //   }
 // };
 
-export const getMessageStateClassName = (messageState: number): string => {
-  switch (messageState) {
-    case 0:
-      return 'deafult';
+export const getMessageStateClassName = (priority: number): string => {
+  // console.log(priority);
+  switch (priority) {
     case 1:
-      return 'important';
+      return 'deafult';
     case 2:
+      return 'important';
+    case 3:
       return 'emergency';
     // case MessageStateData.MENTION:
     //   return 'mention';
