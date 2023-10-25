@@ -63,6 +63,7 @@ export function TextArea({
 
   const inputDelete = (): void => {
     if (sendInput !== '') {
+
       setInput('');
     }
   };
