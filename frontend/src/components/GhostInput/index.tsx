@@ -11,12 +11,15 @@ import { markdown, removeFormattingChars, reverseMarkdown } from './markdown';
 export function GhostInput({
   onChange,
 }: {
-  onChange?: (value: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange?: (value: string) => void;
 }) {
   const [input, setInput] = useAtom(inputAtom);
   const [, setSendInput] = useAtom(sendInputAtom);
   const [inputHeight, setInputHeight] = useState(0);
   const [inputWidth, setInputWidth] = useState(0);
+
+  const divRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
 
   const onChangeT =
     onChange ||
@@ -66,7 +69,7 @@ export function GhostInput({
         value={input}
         onChange={(e) => {
           setInput(e.target.value);
-          onChangeT(e);
+          onChangeT(input);
         }}
         onKeyDown={(e) => {
           //enter만 누르면 줄바꿈 x

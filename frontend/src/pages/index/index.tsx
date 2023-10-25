@@ -280,12 +280,14 @@ export function IndexPage() {
 
   const element = document.documentElement;
 
-  const handleTextAreaHeightChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
+  const handleTextAreaHeightChange = (event: number | undefined) => {
     const isScrollAtBottom =
       element.scrollHeight - element.scrollTop >= element.clientHeight;
-    const newMargin = `${event.currentTarget.offsetHeight}px`;
+    const newMargin = `${event}px`;
+
+    if (divRef.current) {
+      divRef.current.style.marginBottom = newMargin;
+    }
 
     // console.log(
     //   element.scrollHeight,

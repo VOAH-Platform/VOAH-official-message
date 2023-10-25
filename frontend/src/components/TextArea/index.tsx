@@ -47,7 +47,7 @@ export function TextArea({
 }: {
   writingUser: Array<string>;
   showSelectMessageState: boolean;
-  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange?: (event: number | undefined) => void;
   [key: string]: unknown;
 }) {
   const [, setInput] = useAtom(inputAtom);
