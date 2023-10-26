@@ -21,7 +21,7 @@ import {
   Smile,
   Keyboard,
 } from 'lucide-react';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { postData } from '@/utils/index';
 
@@ -56,7 +56,9 @@ export function TextArea({
   const [sendInput] = useAtom(sendInputAtom);
   const divRef = useRef<HTMLDivElement>(null);
 
+  // useEffect(() => {
   onChange?.(divRef.current?.offsetHeight);
+  // }, []);
 
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);

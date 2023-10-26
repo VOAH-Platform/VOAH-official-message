@@ -23,6 +23,7 @@ import './style.scss';
 
 export function Message({
   order,
+  length,
   userId,
   priority,
   messageContent,
@@ -48,7 +49,7 @@ export function Message({
   return (
     <div
       style={{ marginTop: '0.75rem' }}
-      className={'0' == String(order) ? 'this' : undefined}>
+      className={String(length) == String(order) ? 'this' : undefined}>
       {isMessageAnswering ? (
         <AnswerContent>
           <Reply
