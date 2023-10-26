@@ -376,7 +376,6 @@ export function IndexPage() {
       </div>
       <TextArea
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
-        showSelectMessageState={false}
         onChange={handleTextAreaHeightChange}
       />
     </IndexWrapper>

@@ -20,11 +20,17 @@ import {
   ListOrdered,
   Smile,
   Keyboard,
+  Asterisk,
+  Hexagon,
+  Minus,
 } from 'lucide-react';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
+
+import { postData } from '@/utils/index';
 
 import { GhostInput } from '../GhostInput';
 import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
+import { priorityAtom } from '../Message/priorityAtom';
 
 import { Line } from './line';
 import {
@@ -35,24 +41,24 @@ import {
   TypingWrapper,
   Typing,
   SelectMessageState,
-  StateBox,
+  StateButton,
   InputWrapper,
+  Circle,
 } from './style';
-import { postData } from '@/utils/index';
 
 export function TextArea({
   writingUser,
-  showSelectMessageState,
   onChange,
   ...props
 }: {
   writingUser: Array<string>;
-  showSelectMessageState: boolean;
   onChange?: (event: number | undefined) => void;
   [key: string]: unknown;
 }) {
   const [input, setInput] = useAtom(inputAtom);
   const [sendInput] = useAtom(sendInputAtom);
+  const [priority, setPriority] = useAtom(priorityAtom);
+  const [showSelectPriority, setShowSelectPriority] = useState(false);
 
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
@@ -62,17 +68,18 @@ export function TextArea({
 
   const divRef = useRef<HTMLDivElement>(null);
 
-  const inputDelete = async (): Promise<void> => {
+  const commitMessage = async (): Promise<void> => {
     if (sendInput !== '') {
-      await postData(input);
+      await postData(input, priority);
       setInput('');
+      setPriority(1);
     }
   };
 
   const inputDeleteKeyPress = async (
     e: React.KeyboardEvent<HTMLDivElement>,
   ): Promise<void> => {
-    if (e.key === 'Enter' && !e.shiftKey) await inputDelete();
+    if (e.key === 'Enter' && !e.shiftKey) await commitMessage();
   };
 
   // useEffect(() => {
@@ -87,13 +94,56 @@ export function TextArea({
       }
       {...props}>
       {/* <div style={{ width: '100vw' }} ref={divRef}> */}
-      {showSelectMessageState ? (
+      {showSelectPriority ? (
         <SelectMessageState>
-          <StateBox>
-            <AlertCircle color="white" size={20} /> 긴급
-          </StateBox>
-          <StateBox>중요</StateBox>
-          <StateBox>일반 메시지</StateBox>
+          <StateButton
+            onClick={() => {
+              setPriority(3);
+            }}>
+            <Circle
+              style={{ background: priority === 3 ? '#f86060' : '#ffcaca' }}>
+              <Asterisk color="white" size={20} />
+            </Circle>
+            <p
+              style={{
+                color: '$gray500',
+                fontWeight: priority === 3 ? 'bold' : 'normal',
+              }}>
+              긴급
+            </p>
+          </StateButton>
+          <StateButton
+            onClick={() => {
+              setPriority(2);
+            }}>
+            <Circle
+              style={{ background: priority === 2 ? '#52c192' : '#cbeadb' }}>
+              <Hexagon color="white" size={20} />
+            </Circle>
+            <p
+              style={{
+                color: '$gray500',
+                fontWeight: priority === 2 ? 'bold' : 'normal',
+              }}>
+              중요
+            </p>
+          </StateButton>
+          <StateButton
+            onClick={() => {
+              setPriority(1);
+            }}>
+            <Circle
+              style={{ background: priority === 1 ? '#9099a6' : '#e2e7ec' }}>
+              <Minus color="white" size={20} />
+            </Circle>
+            <p
+              style={{
+                color: '$gray500',
+                fontWeight: priority === 1 ? 'bold' : 'normal',
+              }}>
+              일반 메시지
+            </p>
+          </StateButton>
         </SelectMessageState>
       ) : null}
       {/* <GhostInput /> */}
@@ -107,13 +157,20 @@ export function TextArea({
             placeholder="#공개SW개발자대회에 메시지 보내기"
           /> */}
         </InputWrapper>
-        <CommitBtn onClick={inputDelete}>
+        <CommitBtn onClick={commitMessage}>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
       </TextForm>
       <TextOption>
         <Upload size={25} color="#9099a6" style={{ cursor: 'pointer' }} />{' '}
-        <AlertCircle size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <AlertCircle
+          onClick={() => {
+            setShowSelectPriority(!showSelectPriority);
+          }}
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+        />
         <Line />
         <Bold size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Italic size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
