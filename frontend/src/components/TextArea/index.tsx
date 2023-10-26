@@ -56,6 +56,10 @@ export function TextArea({
 }) {
   const [input, setInput] = useAtom(inputAtom);
   const [sendInput] = useAtom(sendInputAtom);
+  const divRef = useRef<HTMLDivElement>(null);
+
+  onChange?.(divRef.current?.offsetHeight);
+    
   const [priority, setPriority] = useAtom(priorityAtom);
   const [showSelectPriority, setShowSelectPriority] = useState(false);
   const [showFiles, setShowFiles] = useState(false);
@@ -65,8 +69,6 @@ export function TextArea({
     // console.log(`divRef:${divRef.current?.offsetHeight!}`);
     onChange?.(divRef.current?.offsetHeight);
   };
-
-  const divRef = useRef<HTMLDivElement>(null);
 
   const commitMessage = async (): Promise<void> => {
     if (sendInput !== '') {
