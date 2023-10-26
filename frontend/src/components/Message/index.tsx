@@ -45,8 +45,8 @@ export function Message({
   isMessageAnswering: boolean;
   AnsweringUserId: string | null;
   AnsweringMessage: string | null;
-  attachmentType: string;
-  attachmentUrl: string;
+  attachmentType: string | null;
+  attachmentUrl: string | null;
   [key: string]: unknown;
 }) {
   return (
@@ -86,7 +86,7 @@ export function Message({
             <OtherHeaderText>{messageDate}</OtherHeaderText> {/* date */}
           </MessageHeader>
           <Text>
-            {/* {mention === null ? '' : <Mention>{'@' + mention}</Mention>} */}
+            {/* {AnsweringUserId !== null ? <Mention>{'@' + mention}</Mention>} :  */}
             {messageContent.split('\n').map((val, key) => (
               <span
                 dangerouslySetInnerHTML={{

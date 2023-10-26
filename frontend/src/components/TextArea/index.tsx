@@ -1,8 +1,6 @@
 import { useAtom } from 'jotai';
 import {
-  // Asterisk,
-  // Hexagon,
-  // Minus,
+  File,
   SendHorizontal,
   Upload,
   AlertCircle,
@@ -20,9 +18,6 @@ import {
   ListOrdered,
   Smile,
   Keyboard,
-  Asterisk,
-  Hexagon,
-  Minus,
 } from 'lucide-react';
 import { useState, useRef } from 'react';
 
@@ -33,6 +28,7 @@ import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
 import { priorityAtom } from '../Message/priorityAtom';
 
 import { Line } from './line';
+import { PrioritySelector } from './prioritySelector';
 import {
   TextAreaWrapper,
   TextForm,
@@ -40,10 +36,13 @@ import {
   TextOption,
   TypingWrapper,
   Typing,
-  SelectMessageState,
-  StateButton,
   InputWrapper,
-  Circle,
+  FileWrapper,
+  FileBox,
+  FileContent,
+  FileHeaderText,
+  FileText,
+  FilePicture,
 } from './style';
 
 export function TextArea({
@@ -59,6 +58,7 @@ export function TextArea({
   const [sendInput] = useAtom(sendInputAtom);
   const [priority, setPriority] = useAtom(priorityAtom);
   const [showSelectPriority, setShowSelectPriority] = useState(false);
+  const [showFiles, setShowFiles] = useState(false);
 
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
@@ -94,58 +94,30 @@ export function TextArea({
       }
       {...props}>
       {/* <div style={{ width: '100vw' }} ref={divRef}> */}
-      {showSelectPriority ? (
-        <SelectMessageState>
-          <StateButton
-            onClick={() => {
-              setPriority(3);
-            }}>
-            <Circle
-              style={{ background: priority === 3 ? '#f86060' : '#ffcaca' }}>
-              <Asterisk color="white" size={20} />
-            </Circle>
-            <p
-              style={{
-                color: '$gray500',
-                fontWeight: priority === 3 ? 'bold' : 'normal',
-              }}>
-              긴급
-            </p>
-          </StateButton>
-          <StateButton
-            onClick={() => {
-              setPriority(2);
-            }}>
-            <Circle
-              style={{ background: priority === 2 ? '#52c192' : '#cbeadb' }}>
-              <Hexagon color="white" size={20} />
-            </Circle>
-            <p
-              style={{
-                color: '$gray500',
-                fontWeight: priority === 2 ? 'bold' : 'normal',
-              }}>
-              중요
-            </p>
-          </StateButton>
-          <StateButton
-            onClick={() => {
-              setPriority(1);
-            }}>
-            <Circle
-              style={{ background: priority === 1 ? '#9099a6' : '#e2e7ec' }}>
-              <Minus color="white" size={20} />
-            </Circle>
-            <p
-              style={{
-                color: '$gray500',
-                fontWeight: priority === 1 ? 'bold' : 'normal',
-              }}>
-              일반 메시지
-            </p>
-          </StateButton>
-        </SelectMessageState>
-      ) : null}
+      {showSelectPriority ? <PrioritySelector /> : null}
+      {showFiles ? (
+        // 파일
+        <FileWrapper>
+          <FileBox>
+            <File />
+            <FileContent>
+              <FileHeaderText>HWP | 66KB</FileHeaderText>
+              <FileText>학생_자퇴서_및_사유서</FileText>
+              {/** 글자 수 초과 시 줄이는 기능 필요 */}
+            </FileContent>
+          </FileBox>
+          {/* 사진 */}
+          <FileBox>
+            <FilePicture />
+            <FileContent>
+              <FileHeaderText>PNG | 5.2MB</FileHeaderText>
+              <FileText>IMG_1234</FileText>
+            </FileContent>
+          </FileBox>
+        </FileWrapper>
+      ) : (
+        <></>
+      )}
       {/* <GhostInput /> */}
       <TextForm>
         <InputWrapper>
@@ -162,7 +134,15 @@ export function TextArea({
         </CommitBtn>
       </TextForm>
       <TextOption>
-        <Upload size={25} color="#9099a6" style={{ cursor: 'pointer' }} />{' '}
+        <Upload
+          onClick={() => {
+            setShowFiles(!showFiles);
+            //현재 files 디자인만 완성됨
+          }}
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+        />{' '}
         <AlertCircle
           onClick={() => {
             setShowSelectPriority(!showSelectPriority);
