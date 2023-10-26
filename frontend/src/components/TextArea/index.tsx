@@ -1,8 +1,6 @@
 import { useAtom } from 'jotai';
 import {
-  // Asterisk,
-  // Hexagon,
-  // Minus,
+  File,
   SendHorizontal,
   Upload,
   AlertCircle,
@@ -21,14 +19,16 @@ import {
   Smile,
   Keyboard,
 } from 'lucide-react';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import { postData } from '@/utils/index';
 
-import { GhostInput } from '../GhostInput';
+import { GhostInput, moveCursorBack } from '../GhostInput';
 import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
+import { priorityAtom } from '../Message/priorityAtom';
 
 import { Line } from './line';
+import { PrioritySelector } from './prioritySelector';
 import {
   TextAreaWrapper,
   TextForm,
@@ -36,19 +36,21 @@ import {
   TextOption,
   TypingWrapper,
   Typing,
-  SelectMessageState,
-  StateBox,
   InputWrapper,
+  FileWrapper,
+  FileBox,
+  FileContent,
+  FileHeaderText,
+  FileText,
+  FilePicture,
 } from './style';
 
 export function TextArea({
   writingUser,
-  showSelectMessageState,
   onChange,
   ...props
 }: {
   writingUser: Array<string>;
-  showSelectMessageState: boolean;
   onChange?: (event: number | undefined) => void;
   [key: string]: unknown;
 }) {
@@ -56,9 +58,11 @@ export function TextArea({
   const [sendInput] = useAtom(sendInputAtom);
   const divRef = useRef<HTMLDivElement>(null);
 
-  // useEffect(() => {
   onChange?.(divRef.current?.offsetHeight);
-  // }, []);
+    
+  const [priority, setPriority] = useAtom(priorityAtom);
+  const [showSelectPriority, setShowSelectPriority] = useState(false);
+  const [showFiles, setShowFiles] = useState(false);
 
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
@@ -66,17 +70,32 @@ export function TextArea({
     onChange?.(divRef.current?.offsetHeight);
   };
 
-  const inputDelete = async (): Promise<void> => {
+  const commitMessage = async (): Promise<void> => {
     if (sendInput !== '') {
-      await postData(input);
+      await postData(input, priority);
       setInput('');
+      setPriority(1);
     }
   };
+
+  function markdownKeyPress(tagChar: string): void {
+    setInput(input + tagChar + tagChar);
+    setTimeout(() => {
+      moveCursorBack(tagChar.length);
+    }, 1);
+  }
+
+  function initialMarkdownKeyPress(tagChar: string): void {
+    setInput(tagChar + input);
+    setTimeout(() => {
+      moveCursorBack(0);
+    }, 1);
+  }
 
   const inputDeleteKeyPress = async (
     e: React.KeyboardEvent<HTMLDivElement>,
   ): Promise<void> => {
-    if (e.key === 'Enter' && !e.shiftKey) await inputDelete();
+    if (e.key === 'Enter' && !e.shiftKey) await commitMessage();
   };
 
   // useEffect(() => {
@@ -91,15 +110,30 @@ export function TextArea({
       }
       {...props}>
       {/* <div style={{ width: '100vw' }} ref={divRef}> */}
-      {showSelectMessageState ? (
-        <SelectMessageState>
-          <StateBox>
-            <AlertCircle color="white" size={20} /> 긴급
-          </StateBox>
-          <StateBox>중요</StateBox>
-          <StateBox>일반 메시지</StateBox>
-        </SelectMessageState>
-      ) : null}
+      {showSelectPriority ? <PrioritySelector /> : null}
+      {showFiles ? (
+        // 파일
+        <FileWrapper>
+          <FileBox>
+            <File />
+            <FileContent>
+              <FileHeaderText>HWP | 66KB</FileHeaderText>
+              <FileText>학생_자퇴서_및_사유서</FileText>
+              {/** 글자 수 초과 시 줄이는 기능 필요 */}
+            </FileContent>
+          </FileBox>
+          {/* 사진 */}
+          <FileBox>
+            <FilePicture />
+            <FileContent>
+              <FileHeaderText>PNG | 5.2MB</FileHeaderText>
+              <FileText>IMG_1234</FileText>
+            </FileContent>
+          </FileBox>
+        </FileWrapper>
+      ) : (
+        <></>
+      )}
       {/* <GhostInput /> */}
       <TextForm>
         <InputWrapper>
@@ -111,26 +145,86 @@ export function TextArea({
             placeholder="#공개SW개발자대회에 메시지 보내기"
           /> */}
         </InputWrapper>
-        <CommitBtn onClick={inputDelete}>
+        <CommitBtn onClick={commitMessage}>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
       </TextForm>
       <TextOption>
-        <Upload size={25} color="#9099a6" style={{ cursor: 'pointer' }} />{' '}
-        <AlertCircle size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Line />
-        <Bold size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Italic size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Strikethrough
+        <Upload
+          onClick={() => {
+            setShowFiles(!showFiles);
+            //현재 files 디자인만 완성됨
+          }}
           size={25}
           color="#9099a6"
           style={{ cursor: 'pointer' }}
         />
-        <Underline size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <AlertCircle
+          onClick={() => {
+            setShowSelectPriority(!showSelectPriority);
+          }}
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+        />
         <Line />
-        <Heading1 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Heading2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Heading3 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Bold
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('**');
+          }}
+        />
+        <Italic
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('*');
+          }}
+        />
+        <Strikethrough
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('~~');
+          }}
+        />
+        <Underline
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('__');
+          }}
+        />
+        <Line />
+        <Heading1
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('# ');
+          }}
+        />
+        <Heading2
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('## ');
+          }}
+        />
+        <Heading3
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('### ');
+          }}
+        />
         <Line />
         <Link size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Code2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
@@ -139,7 +233,14 @@ export function TextArea({
           color="#9099a6"
           style={{ cursor: 'pointer', color: '$gray400' }}
         />
-        <List size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <List
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('- ');
+          }}
+        />
         <ListOrdered size={25} color="#9099a6" />
         <Line />
         <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />

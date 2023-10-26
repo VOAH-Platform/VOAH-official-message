@@ -128,9 +128,9 @@ export const OtherHeaderText = styled('div', {
 /** 메시지 content */
 export const Text = styled('div', {
   display: 'flex',
-  flexDirection: 'row',
-  gap: '0.25rem',
-  alignItems: 'end',
+  flexDirection: 'column',
+  gap: '0',
+  alignItems: 'start',
   color: '$gray600',
   fontFamily: '$SUIT',
   fontSize: '1rem',

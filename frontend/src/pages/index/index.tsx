@@ -266,7 +266,7 @@ export function IndexPage() {
           attachmentUrl={content.attachment[0].url}
         />
       )) as JSX.Element[];
-      setMessage_list((prev_message) => [...n, ...prev_message]);
+      setMessage_list((prev_message) => [...n.reverse(), ...prev_message]);
     }
     observe_target = document.querySelector('.this') as Element;
     return;
@@ -291,7 +291,7 @@ export function IndexPage() {
       return;
     }
 
-    messages = sample;
+    messages = sample.reverse();
 
     setMessage_list(
       messages.map((content, index) => (
@@ -360,7 +360,6 @@ export function IndexPage() {
       </div>
       <TextArea
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
-        showSelectMessageState={false}
         onChange={handleTextAreaHeightChange}
       />
     </IndexWrapper>

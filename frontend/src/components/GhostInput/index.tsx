@@ -11,6 +11,16 @@ import {
   removeFormattingChars /** reverseMarkdown, */,
 } from './markdown';
 
+export function moveCursorBack(num: number) {
+  const textarea = document.getElementById('ghost') as HTMLTextAreaElement;
+  let cursorPosition = textarea.selectionStart;
+  cursorPosition = Math.max(0, cursorPosition - num);
+  textarea.selectionStart = cursorPosition;
+  textarea.selectionEnd = cursorPosition;
+
+  textarea.focus();
+}
+
 export function GhostInput({
   onChange,
 }: {
@@ -122,6 +132,7 @@ export function GhostInput({
               fontSize: '1rem',
               letterSpacing: '-0.01rem',
               wordBreak: 'break-all',
+              userSelect: 'none',
             }}>
             #공개SW개발자대회 채널에 메세지 보내기
           </span>
