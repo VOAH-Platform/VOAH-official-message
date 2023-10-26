@@ -122,6 +122,7 @@ export function GhostInput({
               fontSize: '1rem',
               letterSpacing: '-0.01rem',
               wordBreak: 'break-all',
+              userSelect: 'none',
             }}>
             #공개SW개발자대회 채널에 메세지 보내기
           </span>

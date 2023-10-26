@@ -19,6 +19,9 @@ import {
 import { getMessageStateClassName } from './utils';
 
 import './style.scss';
+import { markdown, removeFormattingChars } from '../GhostInput/markdown';
+
+import DOMPurify from 'dompurify';
 // import { styled } from '@/stitches.config';
 
 export function Message({
@@ -84,7 +87,23 @@ export function Message({
           </MessageHeader>
           <Text>
             {/* {mention === null ? '' : <Mention>{'@' + mention}</Mention>} */}
-            {messageContent}
+            {messageContent.split('\n').map((val, key) => (
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: removeFormattingChars(
+                    markdown(DOMPurify.sanitize(val)),
+                  ),
+                }}
+                style={{
+                  minHeight: '20px',
+                  color: '$gray600',
+                  fontSize: '1rem',
+                  letterSpacing: '-0.01rem',
+                  wordBreak: 'break-all',
+                  whiteSpace: 'pre-wrap',
+                }}
+                key={key}></span>
+            ))}
             {isMessageEdited ? (
               <OtherHeaderText>(수정됨)</OtherHeaderText>
             ) : (
