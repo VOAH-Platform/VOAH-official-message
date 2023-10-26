@@ -23,6 +23,8 @@ import {
 } from 'lucide-react';
 import { useRef } from 'react';
 
+import { postData } from '@/utils/index';
+
 import { GhostInput } from '../GhostInput';
 import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
 
@@ -38,7 +40,6 @@ import {
   StateBox,
   InputWrapper,
 } from './style';
-import { postData } from '@/utils/index';
 
 export function TextArea({
   writingUser,

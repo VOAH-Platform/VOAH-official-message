@@ -210,14 +210,17 @@ export function IndexPage() {
   let observe_target: Element;
   let loaded = false;
   const first = false;
+  const divRef = useRef<HTMLDivElement>(null);
+  const element = document.documentElement;
   // for (let i = 0; i <= 1; i++) {
   //   messages.push(fetchMessageData());
   // }
 
   useEffect(() => {
-    if (loaded || !first) return;
+    if (loaded || first) return;
+    console.log('아이씨');
     observe_target = document.querySelector('.this') as Element;
-
+    console.log(observe_target);
     if (observe_target) {
       intersectionObserver.observe(observe_target);
     } else {
@@ -225,20 +228,21 @@ export function IndexPage() {
     }
   });
 
-  // useEffect(() => {
-  //   observe_target = document.querySelector('.this') as Element;
-  //   intersectionObserver.observe(observe_target);
-  // });
+  const [loadObserver, setLoadObserver] = useState(true);
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const intersectionObserver = new IntersectionObserver(async (entries) => {
+    console.log(entries[0].intersectionRatio);
+    console.log(loadObserver);
     // console.log(entries[0].intersectionRatio);
-    if (entries[0].intersectionRatio > 0) {
+    if (entries[0].intersectionRatio > 0 && loadObserver) {
+      setLoadObserver(false);
       intersectionObserver.disconnect();
       // console.log(entries[0].intersectionRatio);
       const sample = await fetchData();
       if (sample.length === 0) {
         loaded = true;
+        console.log('??');
         return;
       }
 
@@ -251,7 +255,6 @@ export function IndexPage() {
         <Message
           key={Math.random()}
           order={index}
-          length={messages.length - 1}
           userId={user_info.user.displayname}
           priority={content.Priority}
           messageContent={content.Content}
@@ -265,6 +268,8 @@ export function IndexPage() {
         />
       )) as JSX.Element[];
       setMessage_list((prev_message) => [...n, ...prev_message]);
+      console.log('이거에유');
+      console.log(message_list);
     }
     observe_target = document.querySelector('.this') as Element;
     return;
@@ -275,34 +280,24 @@ export function IndexPage() {
   // console.log(message_list);
   // console.log(observe_target + '이거에유');
 
-  //작동 안함
-  const divRef = useRef<HTMLDivElement>(null);
-
-  const element = document.documentElement;
-
   const handleTextAreaHeightChange = (event: number | undefined) => {
     const isScrollAtBottom =
       element.scrollHeight - element.scrollTop >= element.clientHeight;
     const newMargin = `${event}px`;
-
-    if (divRef.current) {
-      divRef.current.style.marginBottom = newMargin;
-    }
-
-    // console.log(
-    //   element.scrollHeight,
-    //   element.scrollTop,
-    //   element.clientHeight,
-    //   isScrollAtBottom,
-    // );
-
-    if (divRef.current) {
-      divRef.current.style.marginBottom = newMargin;
-    }
-    if (isScrollAtBottom) {
-      // window.scrollTo(0, element.scrollHeight);
-      element.scrollTop = element.scrollHeight;
-    }
+    console.log(
+      element.scrollHeight,
+      element.scrollTop,
+      element.clientHeight,
+      isScrollAtBottom,
+      newMargin,
+    );
+    // if (divRef.current) {
+    //   divRef.current.style.marginBottom = newMargin;
+    // }
+    // if (isScrollAtBottom) {
+    //   // window.scrollTo(0, element.scrollHeight);
+    //   element.scrollTop = element.scrollHeight;
+    // }
   };
 
   // useEffect(() => {
@@ -312,7 +307,7 @@ export function IndexPage() {
   const before_list = async () => {
     const user_info = fetchCoreData();
 
-    console.log('test');
+    console.log('너가 실행되는거임?');
 
     const sample = await fetchData();
     if (sample.length === 0) {
@@ -329,7 +324,6 @@ export function IndexPage() {
         <Message
           key={Math.random()}
           order={index}
-          length={messages.length - 1}
           userId={user_info.user.displayname}
           priority={content.Priority}
           messageContent={content.Content}
