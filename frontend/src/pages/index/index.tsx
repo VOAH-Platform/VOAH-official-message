@@ -279,10 +279,11 @@ export function IndexPage() {
   const [message_list, setMessage_list] = useState<JSX.Element[]>([]);
   // console.log(message_list);
   // console.log(observe_target + '이거에유');
+  let heighLoaded = false;
 
   const handleTextAreaHeightChange = (event: number | undefined) => {
     const isScrollAtBottom =
-      element.scrollHeight - element.scrollTop >= element.clientHeight;
+      element.scrollHeight - element.scrollTop > element.clientHeight;
     const newMargin = `${event}px`;
     console.log(
       element.scrollHeight,
@@ -291,13 +292,14 @@ export function IndexPage() {
       isScrollAtBottom,
       newMargin,
     );
-    // if (divRef.current) {
-    //   divRef.current.style.marginBottom = newMargin;
-    // }
-    // if (isScrollAtBottom) {
-    //   // window.scrollTo(0, element.scrollHeight);
-    //   element.scrollTop = element.scrollHeight;
-    // }
+    if (divRef.current) {
+      divRef.current.style.marginBottom = newMargin;
+    }
+    if (!isScrollAtBottom || !heighLoaded) {
+      // window.scrollTo(0, element.scrollHeight);
+      element.scrollTop = element.scrollHeight;
+      heighLoaded = true;
+    }
   };
 
   // useEffect(() => {

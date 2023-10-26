@@ -54,14 +54,15 @@ export function TextArea({
 }) {
   const [input, setInput] = useAtom(inputAtom);
   const [sendInput] = useAtom(sendInputAtom);
+  const divRef = useRef<HTMLDivElement>(null);
+
+  onChange?.(divRef.current?.offsetHeight);
 
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
     // console.log(`divRef:${divRef.current?.offsetHeight!}`);
     onChange?.(divRef.current?.offsetHeight);
   };
-
-  const divRef = useRef<HTMLDivElement>(null);
 
   const inputDelete = async (): Promise<void> => {
     if (sendInput !== '') {
