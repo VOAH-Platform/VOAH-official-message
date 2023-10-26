@@ -275,7 +275,6 @@ export function IndexPage() {
   // console.log(message_list);
   // console.log(observe_target + '이거에유');
 
-  //작동 안함
   const divRef = useRef<HTMLDivElement>(null);
 
   const element = document.documentElement;
@@ -350,6 +349,30 @@ export function IndexPage() {
       .then((val) => console.log(val))
       .catch((err) => console.log(err));
   });
+
+  const webSocketUrl = `ws://test-voah-message.zirr.al/api/chat/ws/5264cbbc-0f43-4bad-a3a3-3616072fb6c1t`;
+
+  let socket = useRef<WebSocket>(null);
+  useEffect(() => {
+      socket.current = new WebSocket(webSocketUrl);
+      socket.current.onopen = () => {
+        console.log("connected to " + webSocketUrl);
+      };
+      socket.current.onclose = (error) => {
+        console.log("disconnect from " + webSocketUrl);
+        console.log(error);
+      };
+      socket.current.onerror = (error) => {
+        console.log("connection error " + webSocketUrl);
+        console.log(error);
+      };
+      socket.current.onmessage = (evt) => {
+        const data = JSON.parse(evt.data);
+        console.log(data);
+        setItems((prevItems) => [...prevItems, data]);
+      };
+    }
+  }, []);
 
   return (
     <IndexWrapper className="container">
