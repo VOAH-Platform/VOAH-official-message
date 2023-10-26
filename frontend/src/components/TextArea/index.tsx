@@ -23,7 +23,7 @@ import { useState, useRef } from 'react';
 
 import { postData } from '@/utils/index';
 
-import { GhostInput } from '../GhostInput';
+import { GhostInput, moveCursorBack } from '../GhostInput';
 import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
 import { priorityAtom } from '../Message/priorityAtom';
 
@@ -75,6 +75,20 @@ export function TextArea({
       setPriority(1);
     }
   };
+
+  function markdownKeyPress(tagChar: string): void {
+    setInput(input + tagChar + tagChar);
+    setTimeout(() => {
+      moveCursorBack(tagChar.length);
+    }, 1);
+  }
+
+  function initialMarkdownKeyPress(tagChar: string): void {
+    setInput(tagChar + input);
+    setTimeout(() => {
+      moveCursorBack(0);
+    }, 1);
+  }
 
   const inputDeleteKeyPress = async (
     e: React.KeyboardEvent<HTMLDivElement>,
@@ -142,7 +156,7 @@ export function TextArea({
           size={25}
           color="#9099a6"
           style={{ cursor: 'pointer' }}
-        />{' '}
+        />
         <AlertCircle
           onClick={() => {
             setShowSelectPriority(!showSelectPriority);
@@ -152,18 +166,63 @@ export function TextArea({
           style={{ cursor: 'pointer' }}
         />
         <Line />
-        <Bold size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Italic size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Bold
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('**');
+          }}
+        />
+        <Italic
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('*');
+          }}
+        />
         <Strikethrough
           size={25}
           color="#9099a6"
           style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('~~');
+          }}
         />
-        <Underline size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Underline
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('__');
+          }}
+        />
         <Line />
-        <Heading1 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Heading2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Heading3 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Heading1
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('# ');
+          }}
+        />
+        <Heading2
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('## ');
+          }}
+        />
+        <Heading3
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('### ');
+          }}
+        />
         <Line />
         <Link size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
         <Code2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
@@ -172,7 +231,14 @@ export function TextArea({
           color="#9099a6"
           style={{ cursor: 'pointer', color: '$gray400' }}
         />
-        <List size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <List
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('- ');
+          }}
+        />
         <ListOrdered size={25} color="#9099a6" />
         <Line />
         <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />

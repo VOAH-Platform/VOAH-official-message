@@ -11,6 +11,16 @@ import {
   removeFormattingChars /** reverseMarkdown, */,
 } from './markdown';
 
+export function moveCursorBack(num: number) {
+  const textarea = document.getElementById('ghost') as HTMLTextAreaElement;
+  let cursorPosition = textarea.selectionStart;
+  cursorPosition = Math.max(0, cursorPosition - num);
+  textarea.selectionStart = cursorPosition;
+  textarea.selectionEnd = cursorPosition;
+
+  textarea.focus();
+}
+
 export function GhostInput({
   onChange,
 }: {
