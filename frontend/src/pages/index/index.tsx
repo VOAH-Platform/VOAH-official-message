@@ -10,6 +10,7 @@ import { Message } from '@/components/Message';
 import { TextArea } from '@/components/TextArea';
 import { THEME_TOKEN } from '@/constant';
 import { fetchData } from '@/utils/index';
+import { writingUserAtom } from './writingUserAtom';
 
 import { IndexWrapper } from './style';
 
@@ -49,6 +50,11 @@ interface CoreData {
     projects: null;
     'created-at': string;
   };
+}
+
+interface webSocketData {
+  count: number;
+  'writing-user': string[];
 }
 
 // {
@@ -352,26 +358,35 @@ export function IndexPage() {
 
   const webSocketUrl = `ws://test-voah-message.zirr.al/api/chat/ws/5264cbbc-0f43-4bad-a3a3-3616072fb6c1t`;
 
-  let socket = useRef<WebSocket>(null);
+  let socket = useRef<WebSocket | null>(null);
+  const [writingUser, setWritingUser] = useAtom(writingUser);
+  const apiKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTgzMzA2NTcsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.hMK5wSEBSLFYQUtR6FCovJv_6uxDFgfHgIQWQoX8cKI';
   useEffect(() => {
+    if (!socket.current) {
       socket.current = new WebSocket(webSocketUrl);
       socket.current.onopen = () => {
-        console.log("connected to " + webSocketUrl);
+        console.log('connected to ' + webSocketUrl);
+        socket.current?.send(apiKey);
       };
       socket.current.onclose = (error) => {
-        console.log("disconnect from " + webSocketUrl);
+        console.log('disconnect from ' + webSocketUrl);
         console.log(error);
       };
       socket.current.onerror = (error) => {
-        console.log("connection error " + webSocketUrl);
+        console.log('connection error ' + webSocketUrl);
         console.log(error);
       };
-      socket.current.onmessage = (evt) => {
-        const data = JSON.parse(evt.data);
+      socket.current.onmessage = (e) => {
+        const data: webSocketData = JSON.parse(e.data) as webSocketData;
         console.log(data);
-        setItems((prevItems) => [...prevItems, data]);
       };
     }
+
+    return () => {
+      console.log('clean up');
+      socket.current?.close();
+    };
   }, []);
 
   return (
