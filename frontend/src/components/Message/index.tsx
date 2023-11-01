@@ -1,6 +1,6 @@
 // import { Mention } from '../TextArea/style';
 
-import { Reply } from 'lucide-react';
+import { Pencil, Reply, Trash2 } from 'lucide-react';
 
 import { ProfileImg } from './profileImg';
 import { MessageState } from './State/messageState';
@@ -82,6 +82,20 @@ export function Message({
             <MessageState showComponent={getMessageStateClassName(priority)} />
             <Writer>{userId}</Writer>
             <OtherHeaderText>{messageDate}</OtherHeaderText> {/* date */}
+            <Pencil
+              onClick={() => {
+                console.log('sexy');
+              }}
+              size={12}
+              color="#42464A"
+            />
+            <Trash2
+              onClick={() => {
+                console.log('yeah');
+              }}
+              size={12}
+              color="#F73A3A"
+            />
           </MessageHeader>
           <Text>
             {/* {AnsweringUserId !== null ? <Mention>{'@' + mention}</Mention>} :  */}

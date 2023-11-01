@@ -59,7 +59,7 @@ export function TextArea({
   const divRef = useRef<HTMLDivElement>(null);
 
   onChange?.(divRef.current?.offsetHeight);
-    
+
   const [priority, setPriority] = useAtom(priorityAtom);
   const [showSelectPriority, setShowSelectPriority] = useState(false);
   const [showFiles, setShowFiles] = useState(false);
@@ -226,12 +226,29 @@ export function TextArea({
           }}
         />
         <Line />
-        <Link size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Code2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Link
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('^');
+          }}
+        />
+        <Code2
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('`');
+          }}
+        />
         <Quote
           size={25}
           color="#9099a6"
           style={{ cursor: 'pointer', color: '$gray400' }}
+          onClick={() => {
+            markdownKeyPress("'");
+          }}
         />
         <List
           size={25}
@@ -241,7 +258,6 @@ export function TextArea({
             initialMarkdownKeyPress('- ');
           }}
         />
-        <ListOrdered size={25} color="#9099a6" />
         <Line />
         <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
       </TextOption>
