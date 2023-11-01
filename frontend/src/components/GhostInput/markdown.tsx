@@ -7,6 +7,11 @@ const replacingMap: {
   swung: ['~~', '<s>', '</s>'],
   underLine: ['__', '<u>', '</u>'],
   quote: ['`', '<code>', '</code>'],
+  mention: [
+    '@',
+    '<span style="background:#E43475; color:white; font-weight:600">',
+    '</span>',
+  ], //mention
   h3: ['### ', '#', ''],
   h2: ['## ', '#', ''],
   h1: ['# ', '#', ''],
