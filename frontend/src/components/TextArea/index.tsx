@@ -1,3 +1,4 @@
+import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
 import { useAtom } from 'jotai';
 import {
   File,
@@ -15,7 +16,6 @@ import {
   Code2,
   Quote,
   List,
-  ListOrdered,
   Smile,
   Keyboard,
 } from 'lucide-react';
@@ -63,11 +63,17 @@ export function TextArea({
   const [priority, setPriority] = useAtom(priorityAtom);
   const [showSelectPriority, setShowSelectPriority] = useState(false);
   const [showFiles, setShowFiles] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
 
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
     // console.log(`divRef:${divRef.current?.offsetHeight!}`);
     onChange?.(divRef.current?.offsetHeight);
+  };
+
+  const emojiInput = (emojiData: EmojiClickData) => {
+    setInput(input + emojiData.emoji);
+    setShowEmoji(false);
   };
 
   const commitMessage = async (): Promise<void> => {
@@ -134,6 +140,15 @@ export function TextArea({
       ) : (
         <></>
       )}
+      {showEmoji ? (
+        <EmojiPicker
+          autoFocusSearch={false}
+          emojiStyle={EmojiStyle.NATIVE}
+          onEmojiClick={emojiInput}
+        />
+      ) : (
+        <></>
+      )}
       {/* <GhostInput /> */}
       <TextForm>
         <InputWrapper>
@@ -152,6 +167,8 @@ export function TextArea({
       <TextOption>
         <Upload
           onClick={() => {
+            setShowSelectPriority(false);
+            setShowEmoji(false);
             setShowFiles(!showFiles);
             //현재 files 디자인만 완성됨
           }}
@@ -161,6 +178,8 @@ export function TextArea({
         />
         <AlertCircle
           onClick={() => {
+            setShowFiles(false);
+            setShowEmoji(false);
             setShowSelectPriority(!showSelectPriority);
           }}
           size={25}
@@ -259,7 +278,16 @@ export function TextArea({
           }}
         />
         <Line />
-        <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Smile
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            setShowFiles(false);
+            setShowSelectPriority(false);
+            setShowEmoji(!showEmoji);
+          }}
+        />
       </TextOption>
       <TypingWrapper>
         <Keyboard
