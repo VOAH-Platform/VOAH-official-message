@@ -15,7 +15,6 @@ import {
   Code2,
   Quote,
   List,
-  ListOrdered,
   Smile,
   Keyboard,
 } from 'lucide-react';
