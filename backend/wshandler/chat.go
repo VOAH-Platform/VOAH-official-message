@@ -2,12 +2,15 @@ package wshandler
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/google/uuid"
+	"gorm.io/gorm/clause"
 	"implude.kr/VOAH-Official-Message/database"
 	"implude.kr/VOAH-Official-Message/middleware"
+	"implude.kr/VOAH-Official-Message/models"
 )
 
 type Message struct {
@@ -17,7 +20,7 @@ type CheckAccessRequest struct {
 	AccessToken string `json:"access-token" validate:"required"`
 }
 type NewMessageResponse struct {
-	Count       int64    `json:"count"`
+	Count       int      `json:"count"`
 	WritingUser []string `json:"writing-user"`
 }
 type StatusCheckRequest struct {
@@ -45,6 +48,7 @@ func ChatWebsocket() func(*websocket.Conn) {
 				}
 				var checkAccess CheckAccessRequest
 				if err = c.ReadJSON(&checkAccess); err != nil {
+					fmt.Println(err)
 					alive = false
 					c.Close()
 					return
@@ -65,18 +69,38 @@ func ChatWebsocket() func(*websocket.Conn) {
 				lastRecieved = time.Now()
 
 				go func() {
-					var count int64
-					// var chats []models.Chat
+					var count int
 					var lastUpdated time.Time = time.Now()
+					var chats []models.Chat
 
 					db := database.DB
 					rdb := database.Redis.OnWritingRedis
 					for alive {
+						count = 0
 						time.Sleep(3 * time.Second)
 						ctx := context.Background()
 						onWritingUser := []string{}
 						rdb.SMembers(ctx, channelId.String()).ScanSlice(&onWritingUser)
-						db.Where("updated_at > ? AND channel_id = ?", lastUpdated.Local().Format("2006-01-02 15:04:05"), channelId.String()).Count(&count)
+						// fmt.Println(lastUpdated.UTC().Format("2006-01-02 15:04:05"))
+						err = db.Where(&models.Chat{ChannelID: channelId}).
+							Order(clause.OrderByColumn{Column: clause.Column{Name: "updated_at"}, Desc: true}).
+							Limit(20).
+							Find(&chats).Error
+						if err != nil {
+							fmt.Println(err)
+							alive = false
+							c.Close()
+							return
+						}
+						fmt.Println(chats)
+						for _, chat := range chats {
+							fmt.Println(chat.UpdatedAt)
+							fmt.Println(lastUpdated)
+							if chat.UpdatedAt.After(lastUpdated) {
+								count++
+							}
+						}
+						// db.Model(&models.Chat{}).Where("updated_at >= ? AND channel_id = ?", lastUpdated.UTC().Format("2006-01-02 15:04:05"), channelId.String()).Count(&count)
 						lastUpdated = time.Now()
 						if err = c.WriteJSON(NewMessageResponse{Count: count, WritingUser: onWritingUser}); err != nil {
 							alive = false

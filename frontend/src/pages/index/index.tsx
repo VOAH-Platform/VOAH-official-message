@@ -214,41 +214,43 @@ export function IndexPage() {
   const [, setTheme] = useAtom(themeAtom);
   let messages: MessageData[] = [];
   let observe_target: Element;
-  let loaded = false;
-  const first = false;
+  // let loaded = false;
+  // const first = false;
+  const divRef = useRef<HTMLDivElement>(null);
+  const element = document.documentElement;
+  let heighLoaded = false;
   // for (let i = 0; i <= 1; i++) {
   //   messages.push(fetchMessageData());
   // }
 
-  useEffect(() => {
-    if (loaded || !first) return;
-    observe_target = document.querySelector('.this') as Element;
-
-    if (observe_target) {
-      intersectionObserver.observe(observe_target);
-    } else {
-      console.log('.this element not found');
+  const handleTextAreaHeightChange = (event: number | undefined) => {
+    const isScrollAtBottom =
+      element.scrollHeight - element.scrollTop > element.clientHeight;
+    const newMargin = `${event}px`;
+    if (divRef.current) {
+      divRef.current.style.marginBottom = newMargin;
     }
-  });
+    if (!isScrollAtBottom || !heighLoaded) {
+      // window.scrollTo(0, element.scrollHeight);
+      element.scrollTop = element.scrollHeight;
+      heighLoaded = true;
+    }
+  };
 
-  // useEffect(() => {
-  //   observe_target = document.querySelector('.this') as Element;
-  //   intersectionObserver.observe(observe_target);
-  // });
+  const [loadObserver, setLoadObserver] = useState(true);
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const intersectionObserver = new IntersectionObserver(async (entries) => {
-    // console.log(entries[0].intersectionRatio);
-    if (entries[0].intersectionRatio > 0) {
+    console.log(entries[0].intersectionRatio);
+    if (entries[0].intersectionRatio > 0 && loadObserver) {
+      setLoadObserver(false);
       intersectionObserver.disconnect();
       // console.log(entries[0].intersectionRatio);
       const sample = await fetchData();
       if (sample.length === 0) {
-        loaded = true;
+        // loaded = true;
         return;
       }
-
-      console.log('dkagt');
       // for (let i = 0; i < 2; i++) {
       //   sample.push(fetchMessageData());
       // }
@@ -257,7 +259,7 @@ export function IndexPage() {
         <Message
           key={Math.random()}
           order={index}
-          length={messages.length - 1}
+          length={message_list.length}
           userId={user_info.user.displayname}
           priority={content.Priority}
           messageContent={content.Content}
@@ -270,8 +272,9 @@ export function IndexPage() {
           attachmentUrl={content.attachment[0].url}
         />
       )) as JSX.Element[];
-      setMessage_list((prev_message) => [...n.reverse(), ...prev_message]);
+      setMessage_list((prev_message) => [...prev_message, ...n.reverse()]);
     }
+    console.log(message_list);
     observe_target = document.querySelector('.this') as Element;
     return;
   });
@@ -280,36 +283,6 @@ export function IndexPage() {
   const [message_list, setMessage_list] = useState<JSX.Element[]>([]);
   // console.log(message_list);
   // console.log(observe_target + '이거에유');
-
-  const divRef = useRef<HTMLDivElement>(null);
-
-  const element = document.documentElement;
-
-  const handleTextAreaHeightChange = (event: number | undefined) => {
-    const isScrollAtBottom =
-      element.scrollHeight - element.scrollTop >= element.clientHeight;
-    const newMargin = `${event}px`;
-
-    if (divRef.current) {
-      divRef.current.style.marginBottom = newMargin;
-    }
-
-    // console.log(
-    //   element.scrollHeight,
-    //   element.scrollTop,
-    //   element.clientHeight,
-    //   isScrollAtBottom,
-    // );
-
-    if (divRef.current) {
-      divRef.current.style.marginBottom = newMargin;
-    }
-    if (isScrollAtBottom) {
-      // window.scrollTo(0, element.scrollHeight);
-      element.scrollTop = element.scrollHeight;
-    }
-  };
-
   // useEffect(() => {
   //   fetchData();
   // }, []);
@@ -317,14 +290,11 @@ export function IndexPage() {
   const before_list = async () => {
     const user_info = fetchCoreData();
 
-    console.log('test');
-
+    // element.scrollTop = element.scrollHeight;
     const sample = await fetchData();
     if (sample.length === 0) {
-      loaded = true;
+      // loaded = true;
       return;
-    } else {
-      console.log('니가 뭘할 수 잇는데');
     }
 
     messages = sample.reverse();
@@ -334,7 +304,7 @@ export function IndexPage() {
         <Message
           key={Math.random()}
           order={index}
-          length={messages.length - 1}
+          length={0}
           userId={user_info.user.displayname}
           priority={content.Priority}
           messageContent={content.Content}
@@ -351,10 +321,9 @@ export function IndexPage() {
   };
 
   useEffect(() => {
-    before_list()
-      .then((val) => console.log(val))
-      .catch((err) => console.log(err));
-  });
+    before_list().catch((err) => console.log(err));
+    console.log('집에갈래')
+  }, []);
 
   const webSocketUrl = `ws://test-voah-message.zirr.al/api/ws/chat/5264cbbc-0f43-4bad-a3a3-3616072fb6c1`;
 
@@ -392,6 +361,23 @@ export function IndexPage() {
     };
   }, []);
 
+  useEffect(() => {
+    // Function to execute after 3 seconds
+    const delayedFunction = () => {
+      // if (loaded || !first || heighLoaded) return;
+      observe_target = document.querySelector('.this') as Element;
+      if (observe_target) {
+        intersectionObserver.observe(observe_target);
+      }
+    };
+
+    // Set a 3-second delay
+    const delay = 5000; // 3 seconds in milliseconds
+    const delayTimeout = setTimeout(delayedFunction, delay);
+
+    // Clear the timeout if the component unmounts or if some condition changes
+    return () => clearTimeout(delayTimeout);
+  });
   return (
     <IndexWrapper className="container">
       <div ref={divRef}>
@@ -417,7 +403,6 @@ export function IndexPage() {
       </div>
       <TextArea
         writingUser={['팬타곤', '틸토언더바', '누구누구']}
-        showSelectMessageState={false}
         onChange={handleTextAreaHeightChange}
       />
     </IndexWrapper>

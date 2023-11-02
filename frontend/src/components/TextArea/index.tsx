@@ -1,8 +1,6 @@
+import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
 import { useAtom } from 'jotai';
 import {
-  // Asterisk,
-  // Hexagon,
-  // Minus,
   SendHorizontal,
   Upload,
   AlertCircle,
@@ -17,16 +15,20 @@ import {
   Code2,
   Quote,
   List,
-  ListOrdered,
   Smile,
   Keyboard,
 } from 'lucide-react';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 
-import { GhostInput } from '../GhostInput';
+import { postData } from '@/utils/index';
+
+import { FileContent } from '../FileContent';
+import { GhostInput, moveCursorBack } from '../GhostInput';
 import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
+import { priorityAtom } from '../Message/priorityAtom';
 
 import { Line } from './line';
+import { PrioritySelector } from './prioritySelector';
 import {
   TextAreaWrapper,
   TextForm,
@@ -34,25 +36,29 @@ import {
   TextOption,
   TypingWrapper,
   Typing,
-  SelectMessageState,
-  StateBox,
   InputWrapper,
+  FileWrapper,
 } from './style';
-import { postData } from '@/utils/index';
 
 export function TextArea({
   writingUser,
-  showSelectMessageState,
   onChange,
   ...props
 }: {
   writingUser: Array<string>;
-  showSelectMessageState: boolean;
   onChange?: (event: number | undefined) => void;
   [key: string]: unknown;
 }) {
   const [input, setInput] = useAtom(inputAtom);
   const [sendInput] = useAtom(sendInputAtom);
+  const divRef = useRef<HTMLDivElement>(null);
+
+  onChange?.(divRef.current?.offsetHeight);
+
+  const [priority, setPriority] = useAtom(priorityAtom);
+  const [showSelectPriority, setShowSelectPriority] = useState(false);
+  const [showFiles, setShowFiles] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
 
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
@@ -60,19 +66,37 @@ export function TextArea({
     onChange?.(divRef.current?.offsetHeight);
   };
 
-  const divRef = useRef<HTMLDivElement>(null);
+  const emojiInput = (emojiData: EmojiClickData) => {
+    setInput(input + emojiData.emoji);
+    setShowEmoji(false);
+  };
 
-  const inputDelete = async (): Promise<void> => {
+  const commitMessage = async (): Promise<void> => {
     if (sendInput !== '') {
-      await postData(input);
+      await postData(input, priority);
       setInput('');
+      setPriority(1);
     }
   };
+
+  function markdownKeyPress(tagChar: string): void {
+    setInput(input + tagChar + tagChar);
+    setTimeout(() => {
+      moveCursorBack(tagChar.length);
+    }, 1);
+  }
+
+  function initialMarkdownKeyPress(tagChar: string): void {
+    setInput(tagChar + input);
+    setTimeout(() => {
+      moveCursorBack(0);
+    }, 1);
+  }
 
   const inputDeleteKeyPress = async (
     e: React.KeyboardEvent<HTMLDivElement>,
   ): Promise<void> => {
-    if (e.key === 'Enter' && !e.shiftKey) await inputDelete();
+    if (e.key === 'Enter' && !e.shiftKey) await commitMessage();
   };
 
   // useEffect(() => {
@@ -87,15 +111,37 @@ export function TextArea({
       }
       {...props}>
       {/* <div style={{ width: '100vw' }} ref={divRef}> */}
-      {showSelectMessageState ? (
-        <SelectMessageState>
-          <StateBox>
-            <AlertCircle color="white" size={20} /> 긴급
-          </StateBox>
-          <StateBox>중요</StateBox>
-          <StateBox>일반 메시지</StateBox>
-        </SelectMessageState>
-      ) : null}
+      {showSelectPriority ? <PrioritySelector /> : null}
+      {showFiles ? (
+        // 파일
+        <FileWrapper>
+          <FileContent
+            type="HWP"
+            capacity="64KB"
+            name="자퇴서"
+            isPicture={false}
+            canDownload={false}
+          />
+          <FileContent
+            type="PNG"
+            capacity="1.2MB"
+            name="증명사진"
+            isPicture={true}
+            canDownload={false}
+          />
+        </FileWrapper>
+      ) : (
+        <></>
+      )}
+      {showEmoji ? (
+        <EmojiPicker
+          autoFocusSearch={false}
+          emojiStyle={EmojiStyle.NATIVE}
+          onEmojiClick={emojiInput}
+        />
+      ) : (
+        <></>
+      )}
       {/* <GhostInput /> */}
       <TextForm>
         <InputWrapper>
@@ -107,38 +153,134 @@ export function TextArea({
             placeholder="#공개SW개발자대회에 메시지 보내기"
           /> */}
         </InputWrapper>
-        <CommitBtn onClick={inputDelete}>
+        <CommitBtn onClick={commitMessage}>
           <SendHorizontal color="white" size={25} />
         </CommitBtn>
       </TextForm>
       <TextOption>
-        <Upload size={25} color="#9099a6" style={{ cursor: 'pointer' }} />{' '}
-        <AlertCircle size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Line />
-        <Bold size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Italic size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Strikethrough
+        <Upload
+          onClick={() => {
+            setShowSelectPriority(false);
+            setShowEmoji(false);
+            setShowFiles(!showFiles);
+            //현재 files 디자인만 완성됨
+          }}
           size={25}
           color="#9099a6"
           style={{ cursor: 'pointer' }}
         />
-        <Underline size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <AlertCircle
+          onClick={() => {
+            setShowFiles(false);
+            setShowEmoji(false);
+            setShowSelectPriority(!showSelectPriority);
+          }}
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+        />
         <Line />
-        <Heading1 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Heading2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Heading3 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Bold
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('**');
+          }}
+        />
+        <Italic
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('*');
+          }}
+        />
+        <Strikethrough
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('~~');
+          }}
+        />
+        <Underline
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('__');
+          }}
+        />
         <Line />
-        <Link size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Code2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Heading1
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('# ');
+          }}
+        />
+        <Heading2
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('## ');
+          }}
+        />
+        <Heading3
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('### ');
+          }}
+        />
+        <Line />
+        <Link
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('^');
+          }}
+        />
+        <Code2
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('`');
+          }}
+        />
         <Quote
           size={25}
           color="#9099a6"
           style={{ cursor: 'pointer', color: '$gray400' }}
+          onClick={() => {
+            markdownKeyPress("'");
+          }}
         />
-        <List size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <ListOrdered size={25} color="#9099a6" />
+        <List
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            initialMarkdownKeyPress('- ');
+          }}
+        />
         <Line />
-        <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Smile
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            setShowFiles(false);
+            setShowSelectPriority(false);
+            setShowEmoji(!showEmoji);
+          }}
+        />
       </TextOption>
       <TypingWrapper>
         <Keyboard

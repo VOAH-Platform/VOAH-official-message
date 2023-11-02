@@ -11,6 +11,16 @@ import {
   removeFormattingChars /** reverseMarkdown, */,
 } from './markdown';
 
+export function moveCursorBack(num: number) {
+  const textarea = document.getElementById('ghost') as HTMLTextAreaElement;
+  let cursorPosition = textarea.selectionStart;
+  cursorPosition = Math.max(0, cursorPosition - num);
+  textarea.selectionStart = cursorPosition;
+  textarea.selectionEnd = cursorPosition;
+
+  textarea.focus();
+}
+
 export function GhostInput({
   onChange,
 }: {
@@ -53,7 +63,7 @@ export function GhostInput({
   }, [divRef, divRef.current, input]);
 
   /** 매시지 수정(메시지 불러오기) 함수 */
-  // **************** importMessage 함수를 사용할 경우 밑의 명령은 지우시오 ******************
+  // **************** importMessage 함수를 사용할 경우 각주를 지우고 사용하세요요 ******************
   // const importMessage = (message: string): string => {
   //   setSendInput('');
   //   setInput(reverseMarkdown(message));
@@ -122,6 +132,7 @@ export function GhostInput({
               fontSize: '1rem',
               letterSpacing: '-0.01rem',
               wordBreak: 'break-all',
+              userSelect: 'none',
             }}>
             #공개SW개발자대회 채널에 메세지 보내기
           </span>

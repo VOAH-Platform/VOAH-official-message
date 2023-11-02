@@ -7,7 +7,7 @@ const apiKey =
   'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTgzMzA2NTcsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.hMK5wSEBSLFYQUtR6FCovJv_6uxDFgfHgIQWQoX8cKI';
 
 let messageCount = 0;
-let pageCount = 1;
+let pageCount = 0;
 let loadDone = false;
 
 export const fetchData = async (): Promise<Array<MessageData>> => {
@@ -15,6 +15,7 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
     return [];
   }
   try {
+    ++pageCount;
     const objects: Array<MessageData> = [];
     const data = await getMessage(
       'https://test-voah-message.zirr.al/api/chat',
@@ -54,8 +55,6 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
       });
     }
 
-    pageCount++;
-
     if (messageCount - prevCount < 50) {
       loadDone = true;
       console.log('No more messages');
@@ -72,14 +71,14 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
   return [];
 };
 
-export const postData = async (message: string) => {
+export const postData = async (message: string, p: number) => {
   try {
     const data = await postMessage(
       'https://test-voah-message.zirr.al/api/chat/send',
       {
         content: message,
         'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
-        priority: 1,
+        priority: p,
       } as postMessageBody,
       {
         Authorization: apiKey,

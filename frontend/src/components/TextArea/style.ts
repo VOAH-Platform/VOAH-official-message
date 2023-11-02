@@ -6,7 +6,7 @@ export const TextAreaWrapper = styled('div', {
   height: 'auto',
   // margin: '0 1rem',
   justifyContent: 'space-between',
-  alignItems: 'center',
+  alignItems: 'start',
   alignSelf: 'stretch',
   background: '$gray0',
   position: 'fixed',
@@ -15,27 +15,45 @@ export const TextAreaWrapper = styled('div', {
   left: '0',
 });
 
+export const FileWrapper = styled('div', {
+  display: 'flex',
+  flexDirection: 'row',
+  gap: '0.5rem',
+  marginTop: '0.5rem',
+});
+
 export const SelectMessageState = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   width: '11rem',
   height: '9.5rem',
-  padding: '1rem',
+  padding: '1rem 2.5rem 1rem 1rem',
   justifyContent: 'space-between',
   alignItems: 'center',
   alignSelf: 'stretch',
-  background: 'red',
   borderRadius: '1rem',
+  boxShadow: '$grade2',
 });
 
-export const StateBox = styled('div', {
+export const StateButton = styled('button', {
   display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
   flexDirection: 'row',
-  width: '7rem',
+  width: '8rem',
   height: '2.5rem',
   padding: '0.5rem',
-  color: 'White',
-  background: 'blue',
+  background: '$gray0',
+  border: 'none',
+});
+
+export const Circle = styled('div', {
+  width: '1.5rem',
+  height: '1.5rem',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '50%',
 });
 
 /** 메시지 입력창과 전송 버튼 감쌈 */
@@ -134,4 +152,5 @@ export const Typing = styled('div', {
   fontWeight: '600',
   lineHeight: '140%',
   letterSpacing: '-0.12px',
+  userSelect: 'none',
 });
