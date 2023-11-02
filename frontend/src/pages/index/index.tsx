@@ -15,6 +15,8 @@ import { writingUserAtom } from './writingUserAtom';
 import { IndexWrapper } from './style';
 
 import './style.scss';
+import { getMessage, getMessageBody } from '@/utils/getMessage.ts';
+import { header } from '@/utils/setting.ts';
 // import { is } from 'date-fns/locale';
 
 // import { MessageStateData, UserStateData } from '@/components/Message/states';
@@ -329,6 +331,7 @@ export function IndexPage() {
 
   const socket = useRef<WebSocket | null>(null);
   const [writingUser, setWritingUser] = useAtom(writingUserAtom);
+  const [count, setCount] = useState(0);
   const apiKey =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg5NDExNDksInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.Muadmyqg3bxvLYnpnzN4AdITFGcEbMcq5s0tovqqQMI';
   useEffect(() => {
@@ -346,12 +349,66 @@ export function IndexPage() {
         console.log('connection error ' + webSocketUrl);
         console.log(error);
       };
-      socket.current.onmessage = (e) => {
+      socket.current.onmessage = async (e) => {
         const data: webSocketData = JSON.parse(e.data) as webSocketData;
         console.log(data);
         // @ts-ignore
         setWritingUser(data['writing-user']);
         console.log(writingUser);
+        const prevCount = count;
+        setCount(data.count);
+        if (prevCount < data.count) {
+          const messageData = await getMessage(
+            'https://test-voah-message.zirr.al/api/chat',
+            {
+              'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
+              count: data.count - prevCount,
+              page: 1,
+            } as getMessageBody,
+            {
+              Authorization: `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+            } as header,
+          );
+          const objects: Array<MessageData> = [];
+          for (const i in messageData.chats) {
+            objects.push({
+              id: messageData.chats[i]['id'],
+              Content: messageData.chats[i]['Content'],
+              Priority: messageData.chats[i]['Priority'],
+              AuthorID: messageData.chats[i]['AuthorID'],
+              ChannelID: messageData.chats[i]['ChannelID'],
+              'created-at': messageData.chats[i]['created-at'],
+              'updated-at': messageData.chats[i]['updated-at'],
+              attachment: [
+                {
+                  type: 'image',
+                  url: 'https://example.com',
+                },
+              ],
+            });
+          }
+
+          const user_info = fetchCoreData();
+          const n = objects.map((content, index) => (
+            <Message
+              key={Math.random()}
+              order={index}
+              length={message_list.length}
+              userId={user_info.user.displayname}
+              priority={content.Priority}
+              messageContent={content.Content}
+              messageDate={calcDate(content['created-at'])}
+              isMessageEdited={true}
+              isMessageAnswering={true}
+              AnsweringUserId={'홍길동'}
+              AnsweringMessage={'왜 벌써 개학임? 집가고싶다.'}
+              attachmentType={content.attachment[0].type}
+              attachmentUrl={content.attachment[0].url}
+            />
+          )) as JSX.Element[];
+          setMessage_list((prev_message) => [...n.reverse(), ...prev_message]);
+        }
       };
     }
 
