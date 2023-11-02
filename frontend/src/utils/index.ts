@@ -4,7 +4,7 @@ import { postMessage, postMessageBody } from '@/utils/postMessage';
 import { header } from '@/utils/setting';
 
 const apiKey =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg4NDM5NjEsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.alzS0i9IoJv32I2q25hrNF23QinSK2OOA_kZeurxd7U';
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg5MTY1MTksInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.Xs_I-Z8es5Nc4_Cf8gMi1oh49vCSFescBj7uo7QZcso';
 
 let messageCount = 0;
 let pageCount = 1;

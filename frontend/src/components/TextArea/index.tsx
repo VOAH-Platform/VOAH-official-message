@@ -1,7 +1,6 @@
 import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
 import { useAtom } from 'jotai';
 import {
-  File,
   SendHorizontal,
   Upload,
   AlertCircle,
@@ -23,6 +22,7 @@ import { useState, useRef } from 'react';
 
 import { postData } from '@/utils/index';
 
+import { FileContent } from '../FileContent';
 import { GhostInput, moveCursorBack } from '../GhostInput';
 import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
 import { priorityAtom } from '../Message/priorityAtom';
@@ -38,11 +38,6 @@ import {
   Typing,
   InputWrapper,
   FileWrapper,
-  FileBox,
-  FileContent,
-  FileHeaderText,
-  FileText,
-  FilePicture,
 } from './style';
 
 export function TextArea({
@@ -120,22 +115,20 @@ export function TextArea({
       {showFiles ? (
         // 파일
         <FileWrapper>
-          <FileBox>
-            <File />
-            <FileContent>
-              <FileHeaderText>HWP | 66KB</FileHeaderText>
-              <FileText>학생_자퇴서_및_사유서</FileText>
-              {/** 글자 수 초과 시 줄이는 기능 필요 */}
-            </FileContent>
-          </FileBox>
-          {/* 사진 */}
-          <FileBox>
-            <FilePicture />
-            <FileContent>
-              <FileHeaderText>PNG | 5.2MB</FileHeaderText>
-              <FileText>IMG_1234</FileText>
-            </FileContent>
-          </FileBox>
+          <FileContent
+            type="HWP"
+            capacity="64KB"
+            name="자퇴서"
+            isPicture={false}
+            canDownload={false}
+          />
+          <FileContent
+            type="PNG"
+            capacity="1.2MB"
+            name="증명사진"
+            isPicture={true}
+            canDownload={false}
+          />
         </FileWrapper>
       ) : (
         <></>
