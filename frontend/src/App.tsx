@@ -4,10 +4,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { themeAtom } from '@/atom';
 import { THEME_TOKEN } from '@/constant';
-import { IndexPage } from '@/pages/index';
+import { ChannelMessagePage } from '@/pages/channel/index';
 import { darkTheme, globalStyles } from '@/stitches.config';
 
 import { NotFoundPage } from './pages/404';
+import { MessageLayout } from './pages/layout';
 
 function App() {
   const [theme] = useAtom(themeAtom);
@@ -55,7 +56,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<IndexPage />} />
+        <Route path="/" element={<MessageLayout />}>
+          <Route path="/channel/:channelId" element={<ChannelMessagePage />} />
+        </Route>
         <Route path="/*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

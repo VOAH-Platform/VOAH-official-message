@@ -1,4 +1,4 @@
-import { MessageData } from '@/pages/index';
+import { MessageData } from '@/pages/channel/index';
 import { getMessage, getMessageBody } from '@/utils/getMessage';
 import { postMessage, postMessageBody } from '@/utils/postMessage';
 import { header } from '@/utils/setting';
@@ -32,6 +32,7 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
 
     const prevCount = messageCount;
 
+    // eslint-disable-next-line @typescript-eslint/no-for-in-array
     for (const i in data.chats) {
       messageCount++;
       // console.log(
@@ -39,11 +40,11 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
       // );
       console.log(data.chats[i]);
       objects.push({
-        id: data.chats[i]['id'],
-        Content: data.chats[i]['Content'],
-        Priority: data.chats[i]['Priority'],
-        AuthorID: data.chats[i]['AuthorID'],
-        ChannelID: data.chats[i]['ChannelID'],
+        id: data.chats[i].id,
+        Content: data.chats[i].Content,
+        Priority: Number(data.chats[i].Priority),
+        AuthorID: data.chats[i].AuthorID,
+        ChannelID: data.chats[i].ChannelID,
         'created-at': data.chats[i]['created-at'],
         'updated-at': data.chats[i]['updated-at'],
         attachment: [

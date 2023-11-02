@@ -1,29 +1,58 @@
-// const { port1, port2 } = new MessageChannel();
+import { useAtom } from 'jotai';
 
-// const voahMessages = user;
+import { connectAtom, themeAtom, userAtom } from '@/atom';
+import { THEME_TOKEN } from '@/constant';
 
-// window.addEventListener('message');
+export const useConnect = () => {
+  if (!window.parent) {
+    alert('Please use this app in iframe');
+    return;
+  }
 
-// window.parent.postMessage
+  const [, setConnect] = useAtom(connectAtom);
+  const [, setUser] = useAtom(userAtom);
+  const [, setTheme] = useAtom(themeAtom);
 
-// export const connectCore = (e: MessageEvent) => {
-//   if (e.origin != 'localhost:8080') {
-//   }
-//   port1.onmessage = (
-//     e: MessageEvent<{
-//       type: string;
-//       data: unknown;
-//     }>,
-//   ) => {
-//     console.log(e.data);
-//     switch (e.data.type) {
-//       case 'VOAH__FRAME_INIT':
-//         voah;
-//         voahMessages.frame.initDone(url);
-//         break;
-//       case 'VOAH__USER_GET_TOKEN':
-//         voahMessages.user.getToken(user.accessToken);
-//         break;
-//     }
-//   };
-// };
+  const handleMessage = (e: MessageEvent) => {
+    const data = e.data as {
+      type: string;
+      data: unknown;
+    };
+    console.log('handleMessage', data);
+
+    switch (data.type) {
+      case 'VOAH__USER_GET_TOKEN_DONE':
+        setUser((prev) => ({
+          ...prev,
+          accessToken: data.data as string,
+        }));
+        break;
+      case 'VOAH__THEME_SET':
+        // eslint-disable-next-line no-case-declarations
+        const token = data.data as THEME_TOKEN;
+        setTheme(() => ({
+          token: token,
+          isDark: token === THEME_TOKEN.DARK ? true : false,
+        }));
+        break;
+      default:
+        break;
+    }
+  };
+
+  window.addEventListener('message', (e) => {
+    const [port2] = e.ports || [];
+
+    if (!port2) {
+      alert('Please use this app in iframe');
+      return;
+    }
+
+    port2.onmessage = handleMessage;
+    setConnect(port2);
+
+    port2.postMessage({
+      type: 'VOAH__FRAME_INIT_DONE',
+    });
+  });
+};

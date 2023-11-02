@@ -1,25 +1,18 @@
-// import { format } from 'date-fnsΩ';
 import { useAtom } from 'jotai';
 import { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 
-// import { useInView } from 'react-intersection-observer';
-import { themeAtom } from '@/atom';
-import { ExampleButton } from '@/components/ExampleButton';
-// eslint-disable-next-line import/namespace
+import { connectAtom, userAtom } from '@/atom';
 import { Message } from '@/components/Message';
 import { TextArea } from '@/components/TextArea';
-import { THEME_TOKEN } from '@/constant';
+import { getMessage, getMessageBody } from '@/utils/getMessage.ts';
 import { fetchData } from '@/utils/index';
-import { writingUserAtom } from './writingUserAtom';
+import { header } from '@/utils/setting.ts';
 
 import { IndexWrapper } from './style';
+import { writingUserAtom } from './writingUserAtom';
 
 import './style.scss';
-import { getMessage, getMessageBody } from '@/utils/getMessage.ts';
-import { header } from '@/utils/setting.ts';
-// import { is } from 'date-fns/locale';
-
-// import { MessageStateData, UserStateData } from '@/components/Message/states';
 
 // TODO: 위치 바꿔야함
 export interface MessageData {
@@ -212,8 +205,9 @@ const calcDate = (tar: string) => {
   return res;
 };
 
-export function IndexPage() {
-  const [, setTheme] = useAtom(themeAtom);
+export function ChannelMessagePage() {
+  const [user] = useAtom(userAtom);
+  const [connect] = useAtom(connectAtom);
   let messages: MessageData[] = [];
   let observe_target: Element;
   // let loaded = false;
@@ -224,6 +218,10 @@ export function IndexPage() {
   // for (let i = 0; i <= 1; i++) {
   //   messages.push(fetchMessageData());
   // }
+
+  useEffect(() => {
+    connect?.postMessage({ type: 'VOAH__USER_GET_TOKEN' });
+  }, [connect]);
 
   const handleTextAreaHeightChange = (event: number | undefined) => {
     const isScrollAtBottom =
@@ -324,22 +322,25 @@ export function IndexPage() {
 
   useEffect(() => {
     before_list().catch((err) => console.log(err));
-    console.log('집에갈래')
   }, []);
 
-  const webSocketUrl = `ws://test-voah-message.zirr.al/api/ws/chat/5264cbbc-0f43-4bad-a3a3-3616072fb6c1`;
+  const { channelId } = useParams();
+
+  const protocol = window.location.protocol.startsWith('https') ? 'wss' : 'ws';
+  const host = window.location.host;
+  const webSocketUrl = `${protocol}://${host}/api/ws/chat/${channelId!}`;
 
   const socket = useRef<WebSocket | null>(null);
   const [writingUser, setWritingUser] = useAtom(writingUserAtom);
   const [count, setCount] = useState(0);
-  const apiKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg5NDExNDksInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.Muadmyqg3bxvLYnpnzN4AdITFGcEbMcq5s0tovqqQMI';
   useEffect(() => {
     if (!socket.current) {
       socket.current = new WebSocket(webSocketUrl);
       socket.current.onopen = () => {
         console.log('connected to ' + webSocketUrl);
-        socket.current?.send(JSON.stringify({ 'access-token': apiKey }));
+        socket.current?.send(
+          JSON.stringify({ 'access-token': user.accessToken }),
+        );
       };
       socket.current.onclose = (error) => {
         console.log('disconnect from ' + webSocketUrl);
@@ -359,25 +360,26 @@ export function IndexPage() {
         setCount(data.count);
         if (prevCount < data.count) {
           const messageData = await getMessage(
-            'https://test-voah-message.zirr.al/api/chat',
+            `/api/chat`,
             {
-              'channel-id': '5264cbbc-0f43-4bad-a3a3-3616072fb6c1',
+              'channel-id': channelId,
               count: data.count - prevCount,
               page: 1,
             } as getMessageBody,
             {
-              Authorization: `Bearer ${apiKey}`,
+              Authorization: `Bearer ${user.accessToken}`,
               'Content-Type': 'application/json',
             } as header,
           );
           const objects: Array<MessageData> = [];
+          // eslint-disable-next-line @typescript-eslint/no-for-in-array
           for (const i in messageData.chats) {
             objects.push({
-              id: messageData.chats[i]['id'],
-              Content: messageData.chats[i]['Content'],
-              Priority: messageData.chats[i]['Priority'],
-              AuthorID: messageData.chats[i]['AuthorID'],
-              ChannelID: messageData.chats[i]['ChannelID'],
+              id: messageData.chats[i].id,
+              Content: messageData.chats[i].Content,
+              Priority: Number(messageData.chats[i].Priority),
+              AuthorID: messageData.chats[i].AuthorID,
+              ChannelID: messageData.chats[i].ChannelID,
               'created-at': messageData.chats[i]['created-at'],
               'updated-at': messageData.chats[i]['updated-at'],
               attachment: [
@@ -438,30 +440,9 @@ export function IndexPage() {
   return (
     <IndexWrapper className="container">
       <div ref={divRef}>
-        VOAH TEMPLATE
-        <ExampleButton
-          onClick={() => setTheme({ token: THEME_TOKEN.LIGHT, isDark: false })}>
-          LIGHT
-        </ExampleButton>
-        <ExampleButton
-          onClick={() => setTheme({ token: THEME_TOKEN.DARK, isDark: true })}>
-          DARK
-        </ExampleButton>
-        <ExampleButton
-          onClick={() =>
-            setTheme({
-              token: THEME_TOKEN.SYSTEM,
-              isDark: window.matchMedia('(prefers-color-scheme: dark)').matches,
-            })
-          }>
-          SYSTEM
-        </ExampleButton>
         <div>{message_list}</div>
       </div>
-      <TextArea
-        writingUser={['팬타곤', '틸토언더바', '누구누구']}
-        onChange={handleTextAreaHeightChange}
-      />
+      <TextArea writingUser={[]} onChange={handleTextAreaHeightChange} />
     </IndexWrapper>
   );
 }
