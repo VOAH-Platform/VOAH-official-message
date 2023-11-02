@@ -2,12 +2,14 @@ package wshandler
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/google/uuid"
 	"implude.kr/VOAH-Official-Message/database"
 	"implude.kr/VOAH-Official-Message/middleware"
+	"implude.kr/VOAH-Official-Message/models"
 )
 
 type Message struct {
@@ -45,6 +47,7 @@ func ChatWebsocket() func(*websocket.Conn) {
 				}
 				var checkAccess CheckAccessRequest
 				if err = c.ReadJSON(&checkAccess); err != nil {
+					fmt.Println(err)
 					alive = false
 					c.Close()
 					return
@@ -76,7 +79,7 @@ func ChatWebsocket() func(*websocket.Conn) {
 						ctx := context.Background()
 						onWritingUser := []string{}
 						rdb.SMembers(ctx, channelId.String()).ScanSlice(&onWritingUser)
-						db.Where("updated_at > ? AND channel_id = ?", lastUpdated.Local().Format("2006-01-02 15:04:05"), channelId.String()).Count(&count)
+						db.Model(&models.Chat{}).Where("updated_at > to_timestamp(?, 'yyyy-mm-dd hh24:mi:ss') AND channel_id = ?", lastUpdated.Local().Format("2006-01-02 15:04:05"), channelId.String()).Count(&count)
 						lastUpdated = time.Now()
 						if err = c.WriteJSON(NewMessageResponse{Count: count, WritingUser: onWritingUser}); err != nil {
 							alive = false

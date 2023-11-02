@@ -1,6 +1,6 @@
 // import { Mention } from '../TextArea/style';
 
-import { Reply } from 'lucide-react';
+import { Pencil, Reply, Trash2 } from 'lucide-react';
 
 import { ProfileImg } from './profileImg';
 import { MessageState } from './State/messageState';
@@ -15,6 +15,7 @@ import {
   Text,
   UserState,
   UserStateBox,
+  FileWrapper,
 } from './style';
 import { getMessageStateClassName } from './utils';
 
@@ -22,6 +23,8 @@ import './style.scss';
 import { markdown, removeFormattingChars } from '../GhostInput/markdown';
 
 import DOMPurify from 'dompurify';
+
+import { FileContent } from '../FileContent';
 // import { styled } from '@/stitches.config';
 
 export function Message({
@@ -82,6 +85,20 @@ export function Message({
             <MessageState showComponent={getMessageStateClassName(priority)} />
             <Writer>{userId}</Writer>
             <OtherHeaderText>{messageDate}</OtherHeaderText> {/* date */}
+            <Pencil
+              onClick={() => {
+                console.log('sexy');
+              }}
+              size={12}
+              color="#42464A"
+            />
+            <Trash2
+              onClick={() => {
+                console.log('yeah');
+              }}
+              size={12}
+              color="#F73A3A"
+            />
           </MessageHeader>
           <Text>
             {/* {AnsweringUserId !== null ? <Mention>{'@' + mention}</Mention>} :  */}
@@ -102,6 +119,29 @@ export function Message({
                 }}
                 key={key}></span>
             ))}
+            <FileWrapper>
+              <FileContent
+                type="HWP"
+                capacity="64KB"
+                name="자퇴서"
+                isPicture={false}
+                canDownload={true}
+              />
+              <FileContent
+                type="PNG"
+                capacity="1.2MB"
+                name="증명사진"
+                isPicture={true}
+                canDownload={true}
+              />
+              <FileContent
+                type="PNG"
+                capacity="1.2MB"
+                name="글자가10자를넘으면잘립니다"
+                isPicture={true}
+                canDownload={true}
+              />
+            </FileWrapper>
             {isMessageEdited ? (
               <OtherHeaderText>(수정됨)</OtherHeaderText>
             ) : (

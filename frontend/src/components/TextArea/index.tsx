@@ -1,6 +1,6 @@
+import EmojiPicker, { EmojiClickData, EmojiStyle } from 'emoji-picker-react';
 import { useAtom } from 'jotai';
 import {
-  File,
   SendHorizontal,
   Upload,
   AlertCircle,
@@ -15,7 +15,6 @@ import {
   Code2,
   Quote,
   List,
-  ListOrdered,
   Smile,
   Keyboard,
 } from 'lucide-react';
@@ -23,6 +22,7 @@ import { useState, useRef, useEffect } from 'react';
 
 import { postData } from '@/utils/index';
 
+import { FileContent } from '../FileContent';
 import { GhostInput, moveCursorBack } from '../GhostInput';
 import { inputAtom, sendInputAtom } from '../GhostInput/inputAtom';
 import { priorityAtom } from '../Message/priorityAtom';
@@ -38,11 +38,6 @@ import {
   Typing,
   InputWrapper,
   FileWrapper,
-  FileBox,
-  FileContent,
-  FileHeaderText,
-  FileText,
-  FilePicture,
 } from './style';
 
 export function TextArea({
@@ -59,15 +54,21 @@ export function TextArea({
   const divRef = useRef<HTMLDivElement>(null);
 
   onChange?.(divRef.current?.offsetHeight);
-    
+
   const [priority, setPriority] = useAtom(priorityAtom);
   const [showSelectPriority, setShowSelectPriority] = useState(false);
   const [showFiles, setShowFiles] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
 
   const handleGhostInputHeightChange = () => {
     // console.log('GhostInput height changed:', height);
     // console.log(`divRef:${divRef.current?.offsetHeight!}`);
     onChange?.(divRef.current?.offsetHeight);
+  };
+
+  const emojiInput = (emojiData: EmojiClickData) => {
+    setInput(input + emojiData.emoji);
+    setShowEmoji(false);
   };
 
   const commitMessage = async (): Promise<void> => {
@@ -114,23 +115,30 @@ export function TextArea({
       {showFiles ? (
         // 파일
         <FileWrapper>
-          <FileBox>
-            <File />
-            <FileContent>
-              <FileHeaderText>HWP | 66KB</FileHeaderText>
-              <FileText>학생_자퇴서_및_사유서</FileText>
-              {/** 글자 수 초과 시 줄이는 기능 필요 */}
-            </FileContent>
-          </FileBox>
-          {/* 사진 */}
-          <FileBox>
-            <FilePicture />
-            <FileContent>
-              <FileHeaderText>PNG | 5.2MB</FileHeaderText>
-              <FileText>IMG_1234</FileText>
-            </FileContent>
-          </FileBox>
+          <FileContent
+            type="HWP"
+            capacity="64KB"
+            name="자퇴서"
+            isPicture={false}
+            canDownload={false}
+          />
+          <FileContent
+            type="PNG"
+            capacity="1.2MB"
+            name="증명사진"
+            isPicture={true}
+            canDownload={false}
+          />
         </FileWrapper>
+      ) : (
+        <></>
+      )}
+      {showEmoji ? (
+        <EmojiPicker
+          autoFocusSearch={false}
+          emojiStyle={EmojiStyle.NATIVE}
+          onEmojiClick={emojiInput}
+        />
       ) : (
         <></>
       )}
@@ -152,6 +160,8 @@ export function TextArea({
       <TextOption>
         <Upload
           onClick={() => {
+            setShowSelectPriority(false);
+            setShowEmoji(false);
             setShowFiles(!showFiles);
             //현재 files 디자인만 완성됨
           }}
@@ -161,6 +171,8 @@ export function TextArea({
         />
         <AlertCircle
           onClick={() => {
+            setShowFiles(false);
+            setShowEmoji(false);
             setShowSelectPriority(!showSelectPriority);
           }}
           size={25}
@@ -226,12 +238,29 @@ export function TextArea({
           }}
         />
         <Line />
-        <Link size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
-        <Code2 size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Link
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('^');
+          }}
+        />
+        <Code2
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            markdownKeyPress('`');
+          }}
+        />
         <Quote
           size={25}
           color="#9099a6"
           style={{ cursor: 'pointer', color: '$gray400' }}
+          onClick={() => {
+            markdownKeyPress("'");
+          }}
         />
         <List
           size={25}
@@ -241,9 +270,17 @@ export function TextArea({
             initialMarkdownKeyPress('- ');
           }}
         />
-        <ListOrdered size={25} color="#9099a6" />
         <Line />
-        <Smile size={25} color="#9099a6" style={{ cursor: 'pointer' }} />
+        <Smile
+          size={25}
+          color="#9099a6"
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            setShowFiles(false);
+            setShowSelectPriority(false);
+            setShowEmoji(!showEmoji);
+          }}
+        />
       </TextOption>
       <TypingWrapper>
         <Keyboard

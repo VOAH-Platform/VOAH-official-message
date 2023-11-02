@@ -208,6 +208,11 @@ export function IndexPage() {
   const [, setTheme] = useAtom(themeAtom);
   let messages: MessageData[] = [];
   let observe_target: Element;
+<<<<<<< HEAD
+=======
+  // let loaded = false;
+  // const first = false;
+>>>>>>> 7c3e00c24cc32b1206173436b06aaf6673fd5ca2
   const divRef = useRef<HTMLDivElement>(null);
   const element = document.documentElement;
   let heighLoaded = false;
@@ -234,13 +239,21 @@ export function IndexPage() {
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const intersectionObserver = new IntersectionObserver(async (entries) => {
     console.log(entries[0].intersectionRatio);
+<<<<<<< HEAD
     if (entries[0].intersectionRatio > 0) {
+=======
+    if (entries[0].intersectionRatio > 0 && loadObserver) {
+>>>>>>> 7c3e00c24cc32b1206173436b06aaf6673fd5ca2
       setLoadObserver(false);
       intersectionObserver.disconnect();
       // console.log(entries[0].intersectionRatio);
       const sample = await fetchData();
       if (sample.length === 0) {
+<<<<<<< HEAD
         console.log("안녕 친구들")
+=======
+        // loaded = true;
+>>>>>>> 7c3e00c24cc32b1206173436b06aaf6673fd5ca2
         return;
       }
       // for (let i = 0; i < 2; i++) {
@@ -264,8 +277,13 @@ export function IndexPage() {
           attachmentUrl={content.attachment[0].url}
         />
       )) as JSX.Element[];
+<<<<<<< HEAD
       setMessage_list((prev_message) => [...n, ...prev_message]);
+=======
+      setMessage_list((prev_message) => [...prev_message, ...n.reverse()]);
+>>>>>>> 7c3e00c24cc32b1206173436b06aaf6673fd5ca2
     }
+    console.log(message_list);
     observe_target = document.querySelector('.this') as Element;
     return;
   });
@@ -282,9 +300,13 @@ export function IndexPage() {
   const before_list = async () => {
     const user_info = fetchCoreData();
 
-    element.scrollTop = element.scrollHeight;
+    // element.scrollTop = element.scrollHeight;
     const sample = await fetchData();
     if (sample.length === 0) {
+<<<<<<< HEAD
+=======
+      // loaded = true;
+>>>>>>> 7c3e00c24cc32b1206173436b06aaf6673fd5ca2
       return;
     }
 
@@ -313,12 +335,17 @@ export function IndexPage() {
 
   useEffect(() => {
     before_list().catch((err) => console.log(err));
+    console.log('집에갈래')
   }, []);
 
   useEffect(() => {
     // Function to execute after 3 seconds
     const delayedFunction = () => {
+<<<<<<< HEAD
       // if (loaded || first || heighLoaded) console.log(1);
+=======
+      // if (loaded || !first || heighLoaded) return;
+>>>>>>> 7c3e00c24cc32b1206173436b06aaf6673fd5ca2
       observe_target = document.querySelector('.this') as Element;
       console.log(observe_target)
       if (observe_target) {

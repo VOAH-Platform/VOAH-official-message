@@ -6,7 +6,18 @@ const replacingMap: {
   italic2: ['_', '<i>', '</i>'],
   swung: ['~~', '<s>', '</s>'],
   underLine: ['__', '<u>', '</u>'],
-  quote: ['`', '<code>', '</code>'],
+  link: ['^', '<a>', '</a>'],
+  code: ['`', '<span style="background:black; color:#00E007">', '</span>'],
+  quote: [
+    "'",
+    '<span style="background:#dee2e6; text-shadow:0px 0px 1px black;">',
+    '</span>',
+  ],
+  mention: [
+    '@',
+    '<span style="background:#E43475; color:white; text-shadow:0px 0px 1px white;">',
+    '</span>',
+  ], //mention
   h3: ['### ', '#', ''],
   h2: ['## ', '#', ''],
   h1: ['# ', '#', ''],
@@ -21,6 +32,18 @@ function replaceStr(
   tag2: string,
 ): string {
   const escapedSubject = subject.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
+
+  // 링크 href 처리
+  if (subject === '^') {
+    const linkPattern = new RegExp(
+      escapedSubject + '(.*?)' + escapedSubject,
+      'g',
+    );
+    return input.replace(linkPattern, (_, innerContent) => {
+      return `^<a href="${innerContent}"><span style="color:blue">${innerContent}</span></a>^`;
+    });
+  }
+
   if (tag2 === '') {
     // 줄의 마지막까지 포함하여 header markdown을 찾는 패턴을 사용
     const pattern = new RegExp(

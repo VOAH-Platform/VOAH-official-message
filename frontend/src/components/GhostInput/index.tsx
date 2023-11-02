@@ -62,7 +62,7 @@ export function GhostInput({
   }, [divRef, divRef.current, input]);
 
   /** 매시지 수정(메시지 불러오기) 함수 */
-  // **************** importMessage 함수를 사용할 경우 밑의 명령은 지우시오 ******************
+  // **************** importMessage 함수를 사용할 경우 각주를 지우고 사용하세요요 ******************
   // const importMessage = (message: string): string => {
   //   setSendInput('');
   //   setInput(reverseMarkdown(message));

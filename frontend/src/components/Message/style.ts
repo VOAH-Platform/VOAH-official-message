@@ -22,7 +22,7 @@ export const MessageWrapper = styled('div', {
   borderRadius: '1rem',
   border: 'none',
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'start',
   // backgroundColor: '$accept500',
   // backgroundColor: 'rgba(39, 178, 120, 0.1)',
   // opacity: '0.1',
@@ -140,6 +140,13 @@ export const Text = styled('div', {
   letterSpacing: '-0.16px',
   borderRadius: '0.5rem',
   border: 'none',
+});
+
+export const FileWrapper = styled('div', {
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  gap: '1rem',
 });
 
 /** 맨션: '@유저'  */
