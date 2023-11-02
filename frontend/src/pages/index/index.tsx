@@ -1,4 +1,4 @@
-// import { format } from 'date-fns';
+// import { format } from 'date-fnsΩ';
 import { useAtom } from 'jotai';
 import { useState, useEffect, useRef } from 'react';
 
@@ -356,18 +356,18 @@ export function IndexPage() {
       .catch((err) => console.log(err));
   });
 
-  const webSocketUrl = `ws://test-voah-message.zirr.al/api/chat/ws/5264cbbc-0f43-4bad-a3a3-3616072fb6c1t`;
+  const webSocketUrl = `ws://test-voah-message.zirr.al/api/ws/chat/5264cbbc-0f43-4bad-a3a3-3616072fb6c1`;
 
-  let socket = useRef<WebSocket | null>(null);
-  const [writingUser, setWritingUser] = useAtom(writingUser);
+  const socket = useRef<WebSocket | null>(null);
+  const [writingUser, setWritingUser] = useAtom(writingUserAtom);
   const apiKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTgzMzA2NTcsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.hMK5wSEBSLFYQUtR6FCovJv_6uxDFgfHgIQWQoX8cKI';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg5NDExNDksInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.Muadmyqg3bxvLYnpnzN4AdITFGcEbMcq5s0tovqqQMI';
   useEffect(() => {
     if (!socket.current) {
       socket.current = new WebSocket(webSocketUrl);
       socket.current.onopen = () => {
         console.log('connected to ' + webSocketUrl);
-        socket.current?.send(apiKey);
+        socket.current?.send(JSON.stringify({ 'access-token': apiKey }));
       };
       socket.current.onclose = (error) => {
         console.log('disconnect from ' + webSocketUrl);
@@ -380,6 +380,9 @@ export function IndexPage() {
       socket.current.onmessage = (e) => {
         const data: webSocketData = JSON.parse(e.data) as webSocketData;
         console.log(data);
+        // @ts-ignore
+        setWritingUser(data['writing-user']);
+        console.log(writingUser);
       };
     }
 
