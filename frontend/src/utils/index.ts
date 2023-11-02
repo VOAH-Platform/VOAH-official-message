@@ -4,8 +4,7 @@ import { postMessage, postMessageBody } from '@/utils/postMessage';
 import { header } from '@/utils/setting';
 
 const apiKey =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg5Mjc1NjksInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.p0QqDNqXV8nYOUOJXJExBtqXbmQjaDibL6nYspAudEw';
-
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg4ODQ0MzEsInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.VBZ-XD2KDMdEs2Nl_mfsytpWz9yaGWwesyq8a-geju4 ';
 let messageCount = 0;
 let pageCount = 0;
 let loadDone = false;
@@ -15,6 +14,7 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
     return [];
   }
   try {
+    console.log(`messageCount: ${messageCount} pageCount: ${pageCount}`);
     ++pageCount;
     const objects: Array<MessageData> = [];
     const data = await getMessage(
@@ -29,9 +29,7 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
         'Content-Type': 'application/json',
       } as header,
     );
-
     const prevCount = messageCount;
-
     for (const i in data.chats) {
       messageCount++;
       // console.log(
@@ -62,7 +60,6 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
     // console.log(data);
     // console.log(data.chats);
     // console.log(JSON.stringify(data.chats));
-    console.log(`messageCount: ${messageCount} pageCount: ${pageCount}`);
 
     return objects;
   } catch (error: any) {

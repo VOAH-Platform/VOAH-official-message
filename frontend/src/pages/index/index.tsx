@@ -208,8 +208,6 @@ export function IndexPage() {
   const [, setTheme] = useAtom(themeAtom);
   let messages: MessageData[] = [];
   let observe_target: Element;
-  // let loaded = false;
-  // const first = false;
   const divRef = useRef<HTMLDivElement>(null);
   const element = document.documentElement;
   let heighLoaded = false;
@@ -236,13 +234,12 @@ export function IndexPage() {
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const intersectionObserver = new IntersectionObserver(async (entries) => {
     console.log(entries[0].intersectionRatio);
-    if (entries[0].intersectionRatio > 0 && loadObserver) {
+    if (entries[0].intersectionRatio > 0) {
       setLoadObserver(false);
       intersectionObserver.disconnect();
       // console.log(entries[0].intersectionRatio);
       const sample = await fetchData();
       if (sample.length === 0) {
-        // loaded = true;
         return;
       }
       // for (let i = 0; i < 2; i++) {
@@ -288,12 +285,11 @@ export function IndexPage() {
     // element.scrollTop = element.scrollHeight;
     const sample = await fetchData();
     if (sample.length === 0) {
-      // loaded = true;
       return;
     }
 
-    messages = sample.reverse();
-
+    messages = sample;
+    console.log(messages);
     setMessage_list(
       messages.map((content, index) => (
         <Message
@@ -323,8 +319,8 @@ export function IndexPage() {
   useEffect(() => {
     // Function to execute after 3 seconds
     const delayedFunction = () => {
-      // if (loaded || !first || heighLoaded) return;
       observe_target = document.querySelector('.this') as Element;
+      console.log(observe_target)
       if (observe_target) {
         intersectionObserver.observe(observe_target);
       }

@@ -18,7 +18,7 @@ import {
   Smile,
   Keyboard,
 } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import { postData } from '@/utils/index';
 

@@ -18,7 +18,9 @@
     &.mention-me {
         background: rgba(155, 46, 207, 0.10);
     }
-
-   
+    
+    &:hover {
+        background-color: gray;
+    }
 }
 
