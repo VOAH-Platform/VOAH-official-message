@@ -1,4 +1,4 @@
-// import { format } from 'date-fns';
+// import { format } from 'date-fnsΩ';
 import { useAtom } from 'jotai';
 import { useState, useEffect, useRef } from 'react';
 
@@ -10,6 +10,7 @@ import { Message } from '@/components/Message';
 import { TextArea } from '@/components/TextArea';
 import { THEME_TOKEN } from '@/constant';
 import { fetchData } from '@/utils/index';
+import { writingUserAtom } from './writingUserAtom';
 
 import { IndexWrapper } from './style';
 
@@ -49,6 +50,11 @@ interface CoreData {
     projects: null;
     'created-at': string;
   };
+}
+
+interface webSocketData {
+  count: number;
+  'writing-user': string[];
 }
 
 // {
@@ -277,7 +283,6 @@ export function IndexPage() {
   const [message_list, setMessage_list] = useState<JSX.Element[]>([]);
   // console.log(message_list);
   // console.log(observe_target + '이거에유');
-
   // useEffect(() => {
   //   fetchData();
   // }, []);
@@ -318,6 +323,42 @@ export function IndexPage() {
   useEffect(() => {
     before_list().catch((err) => console.log(err));
     console.log('집에갈래')
+  }, []);
+
+  const webSocketUrl = `ws://test-voah-message.zirr.al/api/ws/chat/5264cbbc-0f43-4bad-a3a3-3616072fb6c1`;
+
+  const socket = useRef<WebSocket | null>(null);
+  const [writingUser, setWritingUser] = useAtom(writingUserAtom);
+  const apiKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg5NDExNDksInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.Muadmyqg3bxvLYnpnzN4AdITFGcEbMcq5s0tovqqQMI';
+  useEffect(() => {
+    if (!socket.current) {
+      socket.current = new WebSocket(webSocketUrl);
+      socket.current.onopen = () => {
+        console.log('connected to ' + webSocketUrl);
+        socket.current?.send(JSON.stringify({ 'access-token': apiKey }));
+      };
+      socket.current.onclose = (error) => {
+        console.log('disconnect from ' + webSocketUrl);
+        console.log(error);
+      };
+      socket.current.onerror = (error) => {
+        console.log('connection error ' + webSocketUrl);
+        console.log(error);
+      };
+      socket.current.onmessage = (e) => {
+        const data: webSocketData = JSON.parse(e.data) as webSocketData;
+        console.log(data);
+        // @ts-ignore
+        setWritingUser(data['writing-user']);
+        console.log(writingUser);
+      };
+    }
+
+    return () => {
+      console.log('clean up');
+      socket.current?.close();
+    };
   }, []);
 
   useEffect(() => {
