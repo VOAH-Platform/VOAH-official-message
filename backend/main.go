@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -20,6 +21,8 @@ func main() {
 
 	serverConf := configs.Env.Server
 	log := logger.Logger
+
+	log.Info("Container Timezone is " + time.Local.String())
 
 	app := fiber.New()
 
