@@ -208,8 +208,8 @@ export function IndexPage() {
   const [, setTheme] = useAtom(themeAtom);
   let messages: MessageData[] = [];
   let observe_target: Element;
-  let loaded = false;
-  const first = false;
+  // let loaded = false;
+  // const first = false;
   const divRef = useRef<HTMLDivElement>(null);
   const element = document.documentElement;
   let heighLoaded = false;
@@ -235,14 +235,14 @@ export function IndexPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   const intersectionObserver = new IntersectionObserver(async (entries) => {
-    // console.log(entries[0].intersectionRatio);
+    console.log(entries[0].intersectionRatio);
     if (entries[0].intersectionRatio > 0 && loadObserver) {
       setLoadObserver(false);
       intersectionObserver.disconnect();
       // console.log(entries[0].intersectionRatio);
       const sample = await fetchData();
       if (sample.length === 0) {
-        loaded = true;
+        // loaded = true;
         return;
       }
       // for (let i = 0; i < 2; i++) {
@@ -266,8 +266,9 @@ export function IndexPage() {
           attachmentUrl={content.attachment[0].url}
         />
       )) as JSX.Element[];
-      setMessage_list((prev_message) => [...n, ...prev_message]);
+      setMessage_list((prev_message) => [...prev_message, ...n.reverse()]);
     }
+    console.log(message_list);
     observe_target = document.querySelector('.this') as Element;
     return;
   });
@@ -284,14 +285,14 @@ export function IndexPage() {
   const before_list = async () => {
     const user_info = fetchCoreData();
 
-    element.scrollTop = element.scrollHeight;
+    // element.scrollTop = element.scrollHeight;
     const sample = await fetchData();
     if (sample.length === 0) {
-      loaded = true;
+      // loaded = true;
       return;
     }
 
-    messages = sample;
+    messages = sample.reverse();
 
     setMessage_list(
       messages.map((content, index) => (
@@ -316,12 +317,13 @@ export function IndexPage() {
 
   useEffect(() => {
     before_list().catch((err) => console.log(err));
+    console.log('집에갈래')
   }, []);
 
   useEffect(() => {
     // Function to execute after 3 seconds
     const delayedFunction = () => {
-      if (loaded || !first || heighLoaded) return;
+      // if (loaded || !first || heighLoaded) return;
       observe_target = document.querySelector('.this') as Element;
       if (observe_target) {
         intersectionObserver.observe(observe_target);

@@ -4,10 +4,10 @@ import { postMessage, postMessageBody } from '@/utils/postMessage';
 import { header } from '@/utils/setting';
 
 const apiKey =
-  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg5MTY1MTksInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.Xs_I-Z8es5Nc4_Cf8gMi1oh49vCSFescBj7uo7QZcso';
+  'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTg5Mjc1NjksInV1aWQiOiIxYTgyOGZhNC04ZDc2LTQxNzAtOGY2MS05MjdiMWI3YjNhZmQifQ.p0QqDNqXV8nYOUOJXJExBtqXbmQjaDibL6nYspAudEw';
 
 let messageCount = 0;
-let pageCount = 1;
+let pageCount = 0;
 let loadDone = false;
 
 export const fetchData = async (): Promise<Array<MessageData>> => {
@@ -15,6 +15,7 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
     return [];
   }
   try {
+    ++pageCount;
     const objects: Array<MessageData> = [];
     const data = await getMessage(
       'https://test-voah-message.zirr.al/api/chat',
@@ -53,8 +54,6 @@ export const fetchData = async (): Promise<Array<MessageData>> => {
         ],
       });
     }
-
-    pageCount++;
 
     if (messageCount - prevCount < 50) {
       loadDone = true;
