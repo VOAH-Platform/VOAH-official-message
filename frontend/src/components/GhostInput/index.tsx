@@ -17,7 +17,6 @@ export function moveCursorBack(num: number) {
   cursorPosition = Math.max(0, cursorPosition - num);
   textarea.selectionStart = cursorPosition;
   textarea.selectionEnd = cursorPosition;
-
   textarea.focus();
 }
 

@@ -13,6 +13,7 @@ export const TextAreaWrapper = styled('div', {
   width: '100vw',
   bottom: '0',
   left: '0',
+  
 });
 
 export const FileWrapper = styled('div', {
