@@ -19,10 +19,10 @@
    sudo apt-get install -y postgresql-client
    ```
 2. create Database "voah-message"
-  ```yaml
-  version: '3'
-  
-  services:
+   ```yaml
+   version: '3'
+   
+   services:
     voah-message:
       container_name: voah-message-dev
       image: implude/voah-message-dev
@@ -35,8 +35,14 @@
         - 8080
       volumes:
         - ./backend/data:/data
-  networks:
+   networks:
     default:
       name: voah
       external: true
-  ```
+   ```
+   ```bash
+   psql
+
+   CREATE DATABASE voah-message;
+   ```
+
