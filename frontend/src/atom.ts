@@ -8,8 +8,36 @@ export const themeAtom = atomWithStorage('theme', {
   isDark: false,
 });
 
-export const userAtom = atomWithStorage('user', {
+export const userAtom = atomWithStorage<{
+  accessToken: string;
+  id: string;
+  profile: {
+    'user-id': string;
+    email: string;
+    username: string;
+    displayname: string;
+    position: string;
+    description: string;
+    'team-id': string;
+    roles: unknown;
+    projects: unknown[];
+    'created-at': string;
+  };
+}>('user', {
   accessToken: '',
+  id: '',
+  profile: {
+    'user-id': '',
+    email: '',
+    username: '',
+    displayname: '',
+    position: '',
+    description: '',
+    'team-id': '',
+    roles: [],
+    projects: [],
+    'created-at': '',
+  },
 });
 
 export const connectAtom = atom<MessagePort | null>(null);

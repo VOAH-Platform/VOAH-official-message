@@ -56,8 +56,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MessageLayout />}>
-          <Route path="/channel/:channelId" element={<ChannelMessagePage />} />
+        <Route path="/:targetId" element={<MessageLayout />}>
+          <Route
+            path="/:targetId/channel/:channelId"
+            element={<ChannelMessagePage />}
+          />
         </Route>
         <Route path="/*" element={<NotFoundPage />} />
       </Routes>

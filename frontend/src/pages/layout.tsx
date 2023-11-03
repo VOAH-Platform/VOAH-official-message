@@ -1,6 +1,8 @@
+/* eslint-disable no-case-declarations */
+import axios from 'axios';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 
 import { connectAtom, themeAtom, userAtom } from '@/atom';
 import { THEME_TOKEN } from '@/constant';
@@ -12,7 +14,7 @@ export function MessageLayout() {
     return;
   }
 
-  const [, setConnect] = useAtom(connectAtom);
+  const [connect, setConnect] = useAtom(connectAtom);
   const [, setUser] = useAtom(userAtom);
   const [theme, setTheme] = useAtom(themeAtom);
 
@@ -30,7 +32,11 @@ export function MessageLayout() {
 
   const match = window.matchMedia('(prefers-color-scheme: dark)');
 
+  const { targetId } = useParams();
+
   useEffect(() => {
+    console.log('theme', theme);
+
     if (theme.token == THEME_TOKEN.SYSTEM) {
       if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
         setDarkTheme();
@@ -68,6 +74,40 @@ export function MessageLayout() {
           ...prev,
           accessToken: data.data as string,
         }));
+        connect?.postMessage({
+          type: 'VOAH__USER_GET_USER',
+        });
+        break;
+      case 'VOAH__USER_GET_USER_DONE':
+        const temp = data.data as {
+          id: string;
+        };
+        setUser((prev) => ({
+          ...prev,
+          id: temp.id,
+        }));
+        connect?.postMessage({
+          type: 'VOAH__USER_GET_PROFILE',
+          data: temp.id,
+        });
+        break;
+      case 'VOAH__USER_GET_PROFILE_DONE':
+        const temp2 = data.data as {
+          'user-id': string;
+          email: string;
+          username: string;
+          displayname: string;
+          position: string;
+          description: string;
+          'team-id': string;
+          roles: unknown;
+          projects: unknown[];
+          'created-at': string;
+        };
+        setUser((prev) => ({
+          ...prev,
+          profile: temp2,
+        }));
         break;
       case 'VOAH__THEME_SET':
         // eslint-disable-next-line no-case-declarations
@@ -96,13 +136,33 @@ export function MessageLayout() {
     port2.postMessage({
       type: 'VOAH__FRAME_INIT_DONE',
     });
+    port2.postMessage({
+      type: 'VOAH__SIDEBAR_SET_INFO',
+      data: {
+        title: 'Message',
+        desc: 'Message',
+        hideDesc: true,
+      },
+    });
   });
 
-  // const location = useLocation();
+  const location = useLocation();
 
-  // useEffect(() => {
-
-  // }, [location]);
+  useEffect(() => {
+    axios
+      .get(`${window.location.origin}/api/channel?target-id=${targetId}`)
+      .then((res) => {
+        const data = res.data as {
+          message: string;
+          result: Array<null>;
+        };
+        console.log('data', data);
+        return;
+      })
+      .catch((err) => {
+        console.log('error', err);
+      });
+  }, [location]);
 
   return (
     <>
