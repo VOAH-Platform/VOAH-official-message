@@ -12,3 +12,31 @@
 - `src/assets` : 다양한 코드 외의 리소스들이 위치합니다.
 - `src/pages` : 페이지 컴포넌트들이 위치합니다.
 - `src/components` : 페이지 컴포넌트들이 사용하는 컴포넌트들이 위치합니다.
+
+## Quick Installation
+1. install psql
+   ```bash
+   sudo apt-get install -y postgresql-client
+   ```
+2. create Database "voah-message"
+  ```yaml
+  version: '3'
+  
+  services:
+    voah-message:
+      container_name: voah-message-dev
+      image: implude/voah-message-dev
+      restart: always
+      environment:
+        TZ: Asia/Seoul
+      env_file:
+        - .env
+      expose:
+        - 8080
+      volumes:
+        - ./backend/data:/data
+  networks:
+    default:
+      name: voah
+      external: true
+  ```
